@@ -9,13 +9,11 @@ This repository is made available for educational purposes. Users are cautioned 
 
 ## The models
 
-* The base model: (web/epidemic-base.html)
-*
+* [The base model](web/epidemic-base.html)
+* [Demographics model](web/epidemic-demographics.html)
 
 Some visualizations from the network:
 
-[![Demographic networks](animations/networks.gif)]
-
-[![michigan](animations/anim.gif)]
-
-[![vacations](animations/animation.gif)]
+[Demographic networks][animations/networks.gif]
+[michigan][animations/anim.gif]
+[vacationers][animations/animation.gif]
