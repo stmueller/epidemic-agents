@@ -9,8 +9,10 @@ This repository is made available for educational purposes. Users are cautioned 
 
 ## The models
 
-* [The base model](web/epidemic-base.html)
+* [The base model](web/epidemic-model-base.html)
 * [Demographics model](web/epidemic-demographics.html)
+* [Michigan geographic model](web/epidemic-michigan.html)
+* [Travellers outside the network model](web/epidemic-model-travellers.html)
 
 Some visualizations from the network:
 
