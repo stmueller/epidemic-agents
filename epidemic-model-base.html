@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Shane T. Mueller" />
+
+<meta name="date" content="2020-05-04" />
+
+<title>Modeling psychological impacts on epidemic spread</title>
+
+<script src="support_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="support_files/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+<script src="support_files/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script src="support_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="support_files/navigation-1.1/tabsets.js"></script>
+<script src="support_files/navigation-1.1/codefolding.js"></script>
+<link href="support_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="support_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="support_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="support_files/readthedown-0.1/readthedown.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("text-table-of-contents");
+});
+</script>
+
+<!-- code folding -->
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+
+<div id="header">
+<h1 class="title">Modeling psychological impacts on epidemic spread</h1>
+</div>
+
+
+<div id="sidebar">
+    <h2><a href="#content">Modeling psychological impacts on epidemic spread</a></h2>
+    <div id="table-of-contents">
+      <ul>
+      <li><a href="#background">Background</a></li>
+      <li><a href="#developing-the-agent">Developing the agent</a></li>
+      <li><a href="#timecourse-of-biological-model">Timecourse of Biological model</a></li>
+      <li><a href="#testing-progression-of-biological-model">Testing progression of biological model</a></li>
+      <li><a href="#create-transition-matrix.">Create transition matrix.</a></li>
+      <li><a href="#basic-social-model">Basic social model</a></li>
+      <li><a href="#incorporating-a-social-network-into-the-model">Incorporating a social network into the model</a></li>
+      <li><a href="#simulating-with-a-social-network.">Simulating with a social network.</a></li>
+      <li><a href="#changing-behavior-based-on-disease-state">Changing behavior based on disease state</a></li>
+      <li><a href="#modeling-policy-changes">Modeling policy changes</a></li>
+      <li><a href="#limations-of-the-model">Limations of the model</a></li>
+      <li><a href="#summary-and-other-simulations">Summary and other simulations</a></li>
+      </ul>
+    </div>
+    
+    <div id="postamble" data-toggle="wy-nav-shift" class="status">
+              <p class="author"><span class="glyphicon glyphicon-user"></span> Shane T. Mueller</p>
+                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> May 4, 2020</p>
+        </div>
+</div>
+
+<div id="main">
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>This markdown file goes through the basics of an agent-based model of epidemic spread. The model implements agents that progress through the disease in a series of stages, with the time required for each stage a random variable controlled by parameters of the model. The agent can have psychological states to allow exploring interactions, compliance, etc. Furthermore, we define a social network that governs the agent’s interaction patterns.</p>
+<p>In this markdown file, we go through, step-by-step, the definition of the agent and the network, and give an initial simulation and look at the data.</p>
+</div>
+<div id="developing-the-agent" class="section level2">
+<h2>Developing the agent</h2>
+<p>We will use a simplified task network model to represent the biological progression of the disease. First, let’s suppose that an agent has two states: its psychological state and its biological state. psychological state might be ‘practicing distancing’, ‘believes conspiracy theory’, ‘in quarantine’, and we can explore these later. Let’s just consider everyone is in a generic ‘informed’ state [1].</p>
+<p>The biological state has a few specific cases:</p>
+<ol style="list-style-type: decimal">
+<li>Unexposed</li>
+<li>Asymptomatic but infected/contagious</li>
+<li>Symptomatic and contagious</li>
+<li>Symptomatic and not contagious</li>
+<li>Post-COVID Immune</li>
+<li>Naturally immune (will not contract)</li>
+<li>Death</li>
+</ol>
+<p>We could identify several others as well. Existing SIR models used for the COVID-19 epidemic often break #3 into 2-3 stages, ending in hospitalization and possibly death. With that stage, we could identify the hospital needs, but it will require estimating more parameters and having a more complex model. Initially, we can define the agent according to just a single biological value–the state it is in. We might assume that initially, most people are in bio-state 1, but some would be in state 6 already, which is essentially the same as state 5. we will also keep track of a psychological value as a placeholder.</p>
+<p>To keep things simple, we will use some global variables to define the model, including the labels for these states.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(dplyr)</a></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">library</span>(sna)</a></code></pre></div>
+<pre><code>## Loading required package: statnet.common</code></pre>
+<pre><code>## 
+## Attaching package: &#39;statnet.common&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     order</code></pre>
+<pre><code>## Loading required package: network</code></pre>
+<pre><code>## network: Classes for Relational Data
+## Version 1.16.0 created on 2019-11-30.
+## copyright (c) 2005, Carter T. Butts, University of California-Irvine
+##                     Mark S. Handcock, University of California -- Los Angeles
+##                     David R. Hunter, Penn State University
+##                     Martina Morris, University of Washington
+##                     Skye Bender-deMoll, University of Washington
+##  For citation information, type citation(&quot;network&quot;).
+##  Type help(&quot;network-package&quot;) to get started.</code></pre>
+<pre><code>## sna: Tools for Social Network Analysis
+## Version 2.5 created on 2019-12-09.
+## copyright (c) 2005, Carter T. Butts, University of California-Irvine
+##  For citation information, type citation(&quot;sna&quot;).
+##  Type help(package=&quot;sna&quot;) to get started.</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">library</span>(knitr)</a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="kw">library</span>(reshape2)</a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="kw">library</span>(igraph)</a></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;igraph&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:sna&#39;:
+## 
+##     betweenness, bonpow, closeness, components, degree, dyad.census,
+##     evcent, hierarchy, is.connected, neighborhood, triad.census</code></pre>
+<pre><code>## The following objects are masked from &#39;package:network&#39;:
+## 
+##     %c%, %s%, add.edges, add.vertices, delete.edges, delete.vertices,
+##     get.edge.attribute, get.edges, get.vertex.attribute, is.bipartite,
+##     is.directed, list.edge.attributes, list.vertex.attributes,
+##     set.edge.attribute, set.vertex.attribute</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     as_data_frame, groups, union</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     decompose, spectrum</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     union</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">STATES &lt;&lt;-<span class="st"> </span><span class="dv">7</span></a>
+<a class="sourceLine" id="cb19-2" title="2"></a>
+<a class="sourceLine" id="cb19-3" title="3">STATENAMES &lt;&lt;-<span class="st">  </span><span class="kw">c</span>(<span class="st">&quot;Unexposed&quot;</span>,</a>
+<a class="sourceLine" id="cb19-4" title="4">                  <span class="st">&quot;Asymptomatic &amp; contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-5" title="5"><span class="st">&quot;Symptomatic and contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="st">&quot;Symptomatic and not contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="st">&quot;Post-COVID immune&quot;</span>,</a>
+<a class="sourceLine" id="cb19-8" title="8"><span class="st">&quot;Naturally immune&quot;</span>,</a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="st">&quot;Death&quot;</span>)</a>
+<a class="sourceLine" id="cb19-10" title="10"></a>
+<a class="sourceLine" id="cb19-11" title="11"></a>
+<a class="sourceLine" id="cb19-12" title="12">STATELABELS &lt;&lt;-<span class="st">  </span><span class="kw">c</span>(<span class="st">&quot;Unexposed&quot;</span>,<span class="st">&quot;Asymptomatic</span><span class="ch">\n</span><span class="st"> &amp; contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-13" title="13"><span class="st">&quot;Symptomatic </span><span class="ch">\n</span><span class="st">&amp; contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-14" title="14"><span class="st">&quot;Symptomatic </span><span class="ch">\n</span><span class="st">&amp; not contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-15" title="15"><span class="st">&quot;Post-COVID immune&quot;</span>,</a>
+<a class="sourceLine" id="cb19-16" title="16"><span class="st">&quot;Naturally immune&quot;</span>,</a>
+<a class="sourceLine" id="cb19-17" title="17"><span class="st">&quot;Death&quot;</span>)</a>
+<a class="sourceLine" id="cb19-18" title="18"></a>
+<a class="sourceLine" id="cb19-19" title="19"></a>
+<a class="sourceLine" id="cb19-20" title="20">makeAgent &lt;-<span class="st"> </span><span class="cf">function</span>(psych,bio)</a>
+<a class="sourceLine" id="cb19-21" title="21">{</a>
+<a class="sourceLine" id="cb19-22" title="22">  <span class="kw">return</span> (<span class="kw">list</span>(<span class="dt">psychstate=</span>psych,<span class="dt">biostate=</span>bio))</a>
+<a class="sourceLine" id="cb19-23" title="23">}</a>
+<a class="sourceLine" id="cb19-24" title="24"></a>
+<a class="sourceLine" id="cb19-25" title="25"><span class="kw">print</span>(<span class="kw">makeAgent</span>(<span class="dv">1</span>,<span class="dv">2</span>))</a></code></pre></div>
+<pre><code>## $psychstate
+## [1] 1
+## 
+## $biostate
+## [1] 2</code></pre>
+<p>We might augment the model to capture things like demographics (health, age). So lets add some more information. This information could involve things like geographical information, school membership, other risk factors, personality, belief in conspiracy theories, etc.</p>
+<p>We will just define these as a named list.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">makeAgent &lt;-<span class="st"> </span><span class="cf">function</span>(psych,bio,<span class="dt">age=</span><span class="dv">30</span>)</a>
+<a class="sourceLine" id="cb21-2" title="2">{</a>
+<a class="sourceLine" id="cb21-3" title="3">  </a>
+<a class="sourceLine" id="cb21-4" title="4">  <span class="kw">return</span> (<span class="kw">list</span>(<span class="dt">psychstate=</span>psych,<span class="dt">biostate=</span>bio,<span class="dt">age=</span>age))</a>
+<a class="sourceLine" id="cb21-5" title="5">}</a>
+<a class="sourceLine" id="cb21-6" title="6"><span class="kw">print</span>(<span class="kw">makeAgent</span>(<span class="dv">1</span>,<span class="dv">2</span>))</a></code></pre></div>
+<pre><code>## $psychstate
+## [1] 1
+## 
+## $biostate
+## [1] 2
+## 
+## $age
+## [1] 30</code></pre>
+</div>
+<div id="timecourse-of-biological-model" class="section level2">
+<h2>Timecourse of Biological model</h2>
+<p>Once infected, we will assume that the trajectory of the disease is essentially fixed and progresses, eventually leading to recovered or (in a small number) death. We need a way to transition the biological state automatically in a reasonable way, much like a task network model that keeps track of time of sub-events. This should consider ONLY the natural progression of the disease. We will model timecourse on a timecourse of 1-day units.</p>
+<p>An easy way to do this is with ballistic events. That is, we can keep track of the next transition point for any state, if it is programmed at the beginning of the state. This let’s you use distributions other than an exponential/geometric distribution, because you can determine the stage duration at the beginning of the stage.</p>
+<p>This creates a slightly more complex model and shows what it looks like:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">makeAgent &lt;-<span class="st"> </span><span class="cf">function</span>(psychstate,biostate,<span class="dt">age=</span><span class="dv">30</span>)</a>
+<a class="sourceLine" id="cb23-2" title="2">{</a>
+<a class="sourceLine" id="cb23-3" title="3">  </a>
+<a class="sourceLine" id="cb23-4" title="4">  <span class="kw">return</span> (<span class="kw">list</span>(<span class="dt">psychstate=</span>psychstate,</a>
+<a class="sourceLine" id="cb23-5" title="5">               <span class="dt">biostate=</span>biostate,</a>
+<a class="sourceLine" id="cb23-6" title="6">               <span class="dt">age=</span>age,</a>
+<a class="sourceLine" id="cb23-7" title="7">               <span class="dt">nextbiostate=</span><span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb23-8" title="8">               <span class="dt">biostatecountdown=</span><span class="ot">NA</span>))</a>
+<a class="sourceLine" id="cb23-9" title="9">}</a>
+<a class="sourceLine" id="cb23-10" title="10"><span class="kw">print</span>(<span class="kw">makeAgent</span>(<span class="dv">1</span>,<span class="dv">2</span>))</a></code></pre></div>
+<pre><code>## $psychstate
+## [1] 1
+## 
+## $biostate
+## [1] 2
+## 
+## $age
+## [1] 30
+## 
+## $nextbiostate
+## [1] NA
+## 
+## $biostatecountdown
+## [1] NA</code></pre>
+</div>
+<div id="testing-progression-of-biological-model" class="section level2">
+<h2>Testing progression of biological model</h2>
+<p>We can prototype the information we need to progress through biological states. Here, when we set a state (infected), we also set the next state and when the next state will occur as a countdown timer. Alterately, we could identify the timepoint at which the change needs to be handled. This might be smarter if we had a larger more complex system, because we could keep track of only the next transitions more efficiently across a large number of agents and transition types. But here, we will just let each agent know when it should transation to the next stage.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="kw">set.seed</span>(<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb25-2" title="2">agent &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>, <span class="dt">biostate=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb25-3" title="3"></a>
+<a class="sourceLine" id="cb25-4" title="4"><span class="co">##infect the agent</span></a>
+<a class="sourceLine" id="cb25-5" title="5">agent<span class="op">$</span>biostate &lt;-<span class="st"> </span><span class="dv">1</span>   <span class="co">##infected but asymptomatic</span></a>
+<a class="sourceLine" id="cb25-6" title="6">agent<span class="op">$</span>nextbiostate &lt;-<span class="st"> </span><span class="dv">2</span>  <span class="co">##infected and symptomitac/contageous</span></a>
+<a class="sourceLine" id="cb25-7" title="7">agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span><span class="kw">ceiling</span>(<span class="kw">abs</span>(<span class="kw">rnorm</span>(<span class="dv">1</span>,<span class="dt">mean=</span><span class="dv">8</span>,<span class="dt">sd=</span><span class="dv">1</span>)))</a>
+<a class="sourceLine" id="cb25-8" title="8"><span class="kw">print</span>(agent)</a></code></pre></div>
+<pre><code>## $psychstate
+## [1] 1
+## 
+## $biostate
+## [1] 1
+## 
+## $age
+## [1] 30
+## 
+## $nextbiostate
+## [1] 2
+## 
+## $biostatecountdown
+## [1] 8</code></pre>
+<p>Notice how this agent knows it is in biostate 1, and it will move to bio state 2 in 8 days.</p>
+<p>##Updating the agent each day</p>
+<p>Right now, although the agent is in state 1, it ‘knows’ it will transition to state 2 in, e.g., 8 days. We just need a function to update the agent’s state every day, change the countdown, and transition the agent to its next state if needed. If there is no next state (cured or dead), we will set the state to NA and no longer update.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">updateAgent&lt;-<span class="st"> </span><span class="cf">function</span>(agent)</a>
+<a class="sourceLine" id="cb27-2" title="2">{</a>
+<a class="sourceLine" id="cb27-3" title="3">   agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span>agent<span class="op">$</span>biostatecountdown <span class="dv">-1</span></a>
+<a class="sourceLine" id="cb27-4" title="4">  <span class="cf">if</span>(agent<span class="op">$</span>biostatecountdown <span class="op">&lt;=</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb27-5" title="5">  {</a>
+<a class="sourceLine" id="cb27-6" title="6">    agent<span class="op">$</span>biostate &lt;-<span class="st"> </span>agent<span class="op">$</span>nextbiostate</a>
+<a class="sourceLine" id="cb27-7" title="7">    agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb27-8" title="8">  }</a>
+<a class="sourceLine" id="cb27-9" title="9">   <span class="kw">return</span>(agent)</a>
+<a class="sourceLine" id="cb27-10" title="10">}</a></code></pre></div>
+<p>Now, we can run a loop, and on each day update the agent with the updateAgent function. Because R is functional, we need to return and replace the agent, which will ultimately make the model slower, and we might consider another approach eventually to scale the simulation up.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">agent<span class="op">$</span>biostate &lt;-<span class="st"> </span><span class="dv">1</span>  <span class="co">##Unexposed</span></a>
+<a class="sourceLine" id="cb28-2" title="2">agent<span class="op">$</span>nextbiostate &lt;-<span class="st"> </span><span class="dv">2</span>  <span class="co">##asymptomatic but infected</span></a>
+<a class="sourceLine" id="cb28-3" title="3">agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span><span class="kw">ceiling</span>(<span class="kw">abs</span>(<span class="kw">rnorm</span>(<span class="dv">1</span>,<span class="dt">mean=</span><span class="dv">8</span>,<span class="dt">sd=</span><span class="dv">1</span>)))</a>
+<a class="sourceLine" id="cb28-4" title="4"><span class="kw">print</span>(agent)</a></code></pre></div>
+<pre><code>## $psychstate
+## [1] 1
+## 
+## $biostate
+## [1] 1
+## 
+## $age
+## [1] 30
+## 
+## $nextbiostate
+## [1] 2
+## 
+## $biostatecountdown
+## [1] 9</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">continue &lt;-<span class="st"> </span><span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb30-2" title="2"><span class="cf">while</span>(continue)</a>
+<a class="sourceLine" id="cb30-3" title="3">{</a>
+<a class="sourceLine" id="cb30-4" title="4">  <span class="kw">print</span>(<span class="kw">paste</span>(agent<span class="op">$</span>biostate,agent<span class="op">$</span>biostatecountdown))</a>
+<a class="sourceLine" id="cb30-5" title="5">  agent &lt;-<span class="st"> </span><span class="kw">updateAgent</span>(agent)</a>
+<a class="sourceLine" id="cb30-6" title="6">   continue &lt;-<span class="op">!</span><span class="kw">is.na</span>(agent<span class="op">$</span>biostatecountdown)</a>
+<a class="sourceLine" id="cb30-7" title="7">}</a></code></pre></div>
+<pre><code>## [1] &quot;1 9&quot;
+## [1] &quot;1 8&quot;
+## [1] &quot;1 7&quot;
+## [1] &quot;1 6&quot;
+## [1] &quot;1 5&quot;
+## [1] &quot;1 4&quot;
+## [1] &quot;1 3&quot;
+## [1] &quot;1 2&quot;
+## [1] &quot;1 1&quot;</code></pre>
+</div>
+<div id="create-transition-matrix." class="section level2">
+<h2>Create transition matrix.</h2>
+<p>Now that we have a way of transitioning between states, we need to implement the entire set of possible transitions and the timing of each stage. To keep it simple, we will make all timing distributions uniform with a min and max parameter for time in each state. We can program several possible pathways through the stages, with a couple branch points (death vs recovery; the possibility of recovering after acquiring with no symptoms). The progression of the disease is completely specified by this data, and a generic update function will then automatically progress the agent each day.</p>
+<p>Along with the main data, we will create functions that set and update the agent state.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="co"># * 1. Unexposed</span></a>
+<a class="sourceLine" id="cb32-2" title="2"><span class="co"># * 2. Asymptomatic but infected/contagious</span></a>
+<a class="sourceLine" id="cb32-3" title="3"><span class="co"># * 3. Symptomatic and contagious</span></a>
+<a class="sourceLine" id="cb32-4" title="4"><span class="co"># * 4. Symptomatic and not contagious</span></a>
+<a class="sourceLine" id="cb32-5" title="5"><span class="co"># * 5. Post-COVID Immune</span></a>
+<a class="sourceLine" id="cb32-6" title="6"><span class="co"># * 6. Naturally immune (will not contract)</span></a>
+<a class="sourceLine" id="cb32-7" title="7"><span class="co"># * 7. Death</span></a>
+<a class="sourceLine" id="cb32-8" title="8"></a>
+<a class="sourceLine" id="cb32-9" title="9"></a>
+<a class="sourceLine" id="cb32-10" title="10">bioTransition &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,STATES,STATES)</a>
+<a class="sourceLine" id="cb32-11" title="11">bioMin &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,STATES)      <span class="co">#state time minimum</span></a>
+<a class="sourceLine" id="cb32-12" title="12">bioMax &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,STATES)      <span class="co">#state time maximum</span></a>
+<a class="sourceLine" id="cb32-13" title="13"></a>
+<a class="sourceLine" id="cb32-14" title="14"></a>
+<a class="sourceLine" id="cb32-15" title="15"></a>
+<a class="sourceLine" id="cb32-16" title="16">bioMin[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">3</span>            <span class="co">#infected but asymptomatic for 3 to 10 days</span></a>
+<a class="sourceLine" id="cb32-17" title="17">bioMax[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">10</span>          </a>
+<a class="sourceLine" id="cb32-18" title="18">bioTransition[<span class="dv">2</span>,<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="fl">.5</span>  <span class="co">#transition to infected with symptoms</span></a>
+<a class="sourceLine" id="cb32-19" title="19">bioTransition[<span class="dv">2</span>,<span class="dv">5</span>] &lt;-<span class="st"> </span><span class="fl">.5</span>  <span class="co">#transition to no longer contagious/cured</span></a>
+<a class="sourceLine" id="cb32-20" title="20"></a>
+<a class="sourceLine" id="cb32-21" title="21"></a>
+<a class="sourceLine" id="cb32-22" title="22">bioMin[<span class="dv">3</span>] &lt;-<span class="st">    </span><span class="dv">3</span>             <span class="co">#symptoms + contagion</span></a>
+<a class="sourceLine" id="cb32-23" title="23">bioMax[<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="dv">8</span>                <span class="co">#symptoms + contagion max</span></a>
+<a class="sourceLine" id="cb32-24" title="24">bioTransition[<span class="dv">3</span>,<span class="dv">4</span>] &lt;-<span class="st">  </span><span class="fl">.95</span>    <span class="co">#transitioon to no longer contagious</span></a>
+<a class="sourceLine" id="cb32-25" title="25">bioTransition[<span class="dv">3</span>,<span class="dv">7</span>] &lt;-<span class="st">  </span><span class="fl">.05</span>    <span class="co">#transitioon to death state </span></a>
+<a class="sourceLine" id="cb32-26" title="26"></a>
+<a class="sourceLine" id="cb32-27" title="27"></a>
+<a class="sourceLine" id="cb32-28" title="28">bioMin[<span class="dv">4</span>] &lt;-<span class="st"> </span><span class="dv">1</span>          <span class="co">#symptoms bot no longer contagiious</span></a>
+<a class="sourceLine" id="cb32-29" title="29">bioMax[<span class="dv">4</span>] &lt;-<span class="st"> </span><span class="dv">7</span></a>
+<a class="sourceLine" id="cb32-30" title="30">bioTransition[<span class="dv">4</span>,<span class="dv">5</span>] &lt;-<span class="st"> </span><span class="dv">1</span>  <span class="co">#Transition to &#39;immune&#39; cured state.</span></a>
+<a class="sourceLine" id="cb32-31" title="31"></a>
+<a class="sourceLine" id="cb32-32" title="32"></a>
+<a class="sourceLine" id="cb32-33" title="33"></a>
+<a class="sourceLine" id="cb32-34" title="34"></a>
+<a class="sourceLine" id="cb32-35" title="35">setAgentState&lt;-<span class="st"> </span><span class="cf">function</span>(agent, biostate)</a>
+<a class="sourceLine" id="cb32-36" title="36">{</a>
+<a class="sourceLine" id="cb32-37" title="37">  agent<span class="op">$</span>biostate &lt;-<span class="st"> </span>biostate</a>
+<a class="sourceLine" id="cb32-38" title="38">  <span class="cf">if</span>(<span class="kw">sum</span>(bioTransition[biostate,])<span class="op">&gt;</span><span class="dv">0</span>) <span class="co"># this state transitions to something else.</span></a>
+<a class="sourceLine" id="cb32-39" title="39">  {</a>
+<a class="sourceLine" id="cb32-40" title="40">    <span class="co">##which state do we go to?</span></a>
+<a class="sourceLine" id="cb32-41" title="41">     agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dt">x=</span><span class="kw">seq</span>(bioMin[biostate],bioMax[biostate]),<span class="dv">1</span>) <span class="co">#how long will we state in this state?</span></a>
+<a class="sourceLine" id="cb32-42" title="42">     agent<span class="op">$</span>nextbiostate &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>STATES, <span class="dt">prob=</span>bioTransition[agent<span class="op">$</span>biostate,],<span class="dt">size=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb32-43" title="43">     </a>
+<a class="sourceLine" id="cb32-44" title="44">  } <span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb32-45" title="45">   agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb32-46" title="46">   agent<span class="op">$</span>nextbiostate &lt;-<span class="st"> </span><span class="ot">NA</span>   <span class="co">##just so we can tell if the agent is finished.</span></a>
+<a class="sourceLine" id="cb32-47" title="47">  }</a>
+<a class="sourceLine" id="cb32-48" title="48">  <span class="kw">return</span>(agent) </a>
+<a class="sourceLine" id="cb32-49" title="49">}</a>
+<a class="sourceLine" id="cb32-50" title="50"></a>
+<a class="sourceLine" id="cb32-51" title="51">transitionAgent&lt;-<span class="st"> </span><span class="cf">function</span>(agent)</a>
+<a class="sourceLine" id="cb32-52" title="52">{</a>
+<a class="sourceLine" id="cb32-53" title="53">   <span class="kw">return</span>(<span class="kw">setAgentState</span>(agent,agent<span class="op">$</span>nextbiostate))</a>
+<a class="sourceLine" id="cb32-54" title="54">}</a>
+<a class="sourceLine" id="cb32-55" title="55"></a>
+<a class="sourceLine" id="cb32-56" title="56">updateAgent&lt;-<span class="st"> </span><span class="cf">function</span>(agent)</a>
+<a class="sourceLine" id="cb32-57" title="57">{</a>
+<a class="sourceLine" id="cb32-58" title="58">  <span class="cf">if</span>(<span class="op">!</span><span class="kw">is.na</span>(agent<span class="op">$</span>biostatecountdown))</a>
+<a class="sourceLine" id="cb32-59" title="59">  {</a>
+<a class="sourceLine" id="cb32-60" title="60">   agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span>agent<span class="op">$</span>biostatecountdown <span class="dv">-1</span></a>
+<a class="sourceLine" id="cb32-61" title="61">    <span class="cf">if</span>(agent<span class="op">$</span>biostatecountdown <span class="op">&lt;=</span><span class="dv">0</span>)  <span class="co">##new state</span></a>
+<a class="sourceLine" id="cb32-62" title="62">    {</a>
+<a class="sourceLine" id="cb32-63" title="63">       agent &lt;-<span class="st"> </span><span class="kw">transitionAgent</span>(agent)</a>
+<a class="sourceLine" id="cb32-64" title="64"></a>
+<a class="sourceLine" id="cb32-65" title="65">    }</a>
+<a class="sourceLine" id="cb32-66" title="66">  }</a>
+<a class="sourceLine" id="cb32-67" title="67">   <span class="kw">return</span>(agent)</a>
+<a class="sourceLine" id="cb32-68" title="68">}</a></code></pre></div>
+<p>Because the biological state system is a network, we can visualize with the gplot function in the sna library:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"><span class="kw">par</span>(<span class="dt">xpd=</span><span class="ot">NA</span>,<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">8</span>,<span class="dv">5</span>))</a>
+<a class="sourceLine" id="cb33-2" title="2"><span class="kw">gplot</span>(bioTransition,<span class="dt">label=</span>STATELABELS)</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-8-1.png" width="768" /></p>
+<p>If we start an agent in an unexposed state, nothing happens. Agent’s do not just naturally develop the disease. We can just update the agent until there is no next-state programmed.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1">agent &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>,<span class="dt">biostate=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb34-2" title="2"></a>
+<a class="sourceLine" id="cb34-3" title="3">continue &lt;-<span class="st"> </span><span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb34-4" title="4"><span class="cf">while</span>(continue)</a>
+<a class="sourceLine" id="cb34-5" title="5">{</a>
+<a class="sourceLine" id="cb34-6" title="6">  <span class="kw">print</span>(<span class="kw">paste</span>(agent<span class="op">$</span>biostate,STATENAMES[agent<span class="op">$</span>biostate],agent<span class="op">$</span>biostatecountdown))</a>
+<a class="sourceLine" id="cb34-7" title="7">  agent &lt;-<span class="st"> </span><span class="kw">updateAgent</span>(agent)</a>
+<a class="sourceLine" id="cb34-8" title="8">  continue &lt;-<span class="op">!</span><span class="kw">is.na</span>(agent<span class="op">$</span>nextbiostate)</a>
+<a class="sourceLine" id="cb34-9" title="9">}</a></code></pre></div>
+<pre><code>## [1] &quot;1 Unexposed NA&quot;</code></pre>
+<p>If we infect a patient, the entire disease progression will occur. Run several times to see the different alternative possibilities.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1">agent &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>,<span class="dt">biostate=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb36-2" title="2">agent &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(agent,<span class="dv">2</span>)<span class="co">##infect!</span></a>
+<a class="sourceLine" id="cb36-3" title="3">continue &lt;-<span class="st"> </span><span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb36-4" title="4"></a>
+<a class="sourceLine" id="cb36-5" title="5">time &lt;-<span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb36-6" title="6"><span class="cf">while</span>(continue)</a>
+<a class="sourceLine" id="cb36-7" title="7">{</a>
+<a class="sourceLine" id="cb36-8" title="8">  </a>
+<a class="sourceLine" id="cb36-9" title="9">  <span class="kw">print</span>(<span class="kw">paste</span>(time,agent<span class="op">$</span>biostate,STATENAMES[agent<span class="op">$</span>biostate],agent<span class="op">$</span>biostatecountdown))</a>
+<a class="sourceLine" id="cb36-10" title="10">  agent &lt;-<span class="st"> </span><span class="kw">updateAgent</span>(agent)</a>
+<a class="sourceLine" id="cb36-11" title="11">  continue &lt;-<span class="op">!</span><span class="kw">is.na</span>(agent<span class="op">$</span>nextbiostate)</a>
+<a class="sourceLine" id="cb36-12" title="12">  time &lt;-<span class="st"> </span>time <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb36-13" title="13">}</a></code></pre></div>
+<pre><code>## [1] &quot;1 2 Asymptomatic &amp; contagious 6&quot;
+## [1] &quot;2 2 Asymptomatic &amp; contagious 5&quot;
+## [1] &quot;3 2 Asymptomatic &amp; contagious 4&quot;
+## [1] &quot;4 2 Asymptomatic &amp; contagious 3&quot;
+## [1] &quot;5 2 Asymptomatic &amp; contagious 2&quot;
+## [1] &quot;6 2 Asymptomatic &amp; contagious 1&quot;
+## [1] &quot;7 3 Symptomatic and contagious 7&quot;
+## [1] &quot;8 3 Symptomatic and contagious 6&quot;
+## [1] &quot;9 3 Symptomatic and contagious 5&quot;
+## [1] &quot;10 3 Symptomatic and contagious 4&quot;
+## [1] &quot;11 3 Symptomatic and contagious 3&quot;
+## [1] &quot;12 3 Symptomatic and contagious 2&quot;
+## [1] &quot;13 3 Symptomatic and contagious 1&quot;
+## [1] &quot;14 4 Symptomatic and not contagious 2&quot;
+## [1] &quot;15 4 Symptomatic and not contagious 1&quot;</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1">  <span class="kw">print</span>(<span class="kw">paste</span>(agent<span class="op">$</span>biostate,STATENAMES[agent<span class="op">$</span>biostate],agent<span class="op">$</span>biostatecountdown))</a></code></pre></div>
+<pre><code>## [1] &quot;5 Post-COVID immune NA&quot;</code></pre>
+</div>
+<div id="basic-social-model" class="section level2">
+<h2>Basic social model</h2>
+<p>Now that we have the biological disease model whose stages we can control (and it has branches too.) We can infect an agent or deliberately change its state. Now, let’s put this is a population. We will assume a flat organization where everyone has an equal chance of interacting with everyone else. Here, the parameters are:</p>
+<ul>
+<li>‘numAgents’: how many agents are in the simulation. This simulation cannot easily handle more than around 1000. Even with a fast computer, you might simulate 5000 and it will take 20 minutes or more. To simulate a larger realistic population, we would need to re-implement some of the data and algorithms.</li>
+<li>‘naturalImmunity’: This controls the proportion who will never get the disease at the beginning of the simulation.</li>
+<li>‘numInteractions’: how many interactions do each agent make every day?</li>
+<li>‘numDays’: how many days to simulate?</li>
+<li>‘contagionProb’: how likely is the disease to spread when an infected agent interacts with a susceptible agent?</li>
+</ul>
+<p>We will also keep track of the the distribution each day in the matrix disthistory. We will start the simulation by infecting a small number of agents (here, 3) using setAgentState() function.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1"><span class="kw">set.seed</span>(<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb40-2" title="2">numAgents &lt;-<span class="st"> </span><span class="dv">500</span></a>
+<a class="sourceLine" id="cb40-3" title="3">naturalImmunity &lt;-<span class="st"> </span><span class="fl">.01</span>  <span class="co">#1 % naturally immune</span></a>
+<a class="sourceLine" id="cb40-4" title="4">numInteractions &lt;-<span class="st">  </span><span class="dv">10</span> <span class="co">##how many interactions per day per agent on average?</span></a>
+<a class="sourceLine" id="cb40-5" title="5">numDays &lt;-<span class="st"> </span><span class="dv">50</span></a>
+<a class="sourceLine" id="cb40-6" title="6">contagionProb &lt;-<span class="st"> </span><span class="fl">.1</span>    <span class="co">##normal contagion probability</span></a>
+<a class="sourceLine" id="cb40-7" title="7"></a>
+<a class="sourceLine" id="cb40-8" title="8"></a>
+<a class="sourceLine" id="cb40-9" title="9">disthistory &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>,<span class="dt">ncol=</span>STATES,<span class="dt">nrow=</span>numDays)</a>
+<a class="sourceLine" id="cb40-10" title="10"></a>
+<a class="sourceLine" id="cb40-11" title="11">pool &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb40-12" title="12"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb40-13" title="13">{</a>
+<a class="sourceLine" id="cb40-14" title="14">  pool[[i]] &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb40-15" title="15">                         <span class="dt">biostate=</span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">6</span>),</a>
+<a class="sourceLine" id="cb40-16" title="16">                          <span class="dt">p=</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">-</span>naturalImmunity, naturalImmunity),<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb40-17" title="17">}</a>
+<a class="sourceLine" id="cb40-18" title="18"></a>
+<a class="sourceLine" id="cb40-19" title="19"><span class="co">##infect patients 0</span></a>
+<a class="sourceLine" id="cb40-20" title="20">numInfected &lt;-<span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb40-21" title="21"><span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">sample</span>(numAgents,numInfected))</a>
+<a class="sourceLine" id="cb40-22" title="22">{</a>
+<a class="sourceLine" id="cb40-23" title="23">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(pool[[i]],<span class="dv">2</span>) <span class="co">##infect this person</span></a>
+<a class="sourceLine" id="cb40-24" title="24">}</a>
+<a class="sourceLine" id="cb40-25" title="25"></a>
+<a class="sourceLine" id="cb40-26" title="26"><span class="cf">for</span>(day <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numDays)</a>
+<a class="sourceLine" id="cb40-27" title="27">{</a>
+<a class="sourceLine" id="cb40-28" title="28"><span class="co">##who are you going to talk to today.</span></a>
+<a class="sourceLine" id="cb40-29" title="29">    sneezeOn &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">each=</span>numInteractions),</a>
+<a class="sourceLine" id="cb40-30" title="30">                      <span class="kw">sample</span>(numAgents,<span class="dt">replace=</span>T,<span class="dt">size=</span>numAgents<span class="op">*</span>numInteractions))</a>
+<a class="sourceLine" id="cb40-31" title="31">    </a>
+<a class="sourceLine" id="cb40-32" title="32"></a>
+<a class="sourceLine" id="cb40-33" title="33">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(sneezeOn))</a>
+<a class="sourceLine" id="cb40-34" title="34">  {</a>
+<a class="sourceLine" id="cb40-35" title="35">    agent1 &lt;-<span class="st"> </span>pool[[ sneezeOn[i,<span class="dv">1</span>] ]]</a>
+<a class="sourceLine" id="cb40-36" title="36">    agent2 &lt;-<span class="st"> </span>pool[[ sneezeOn[i,<span class="dv">2</span>] ]]</a>
+<a class="sourceLine" id="cb40-37" title="37">  </a>
+<a class="sourceLine" id="cb40-38" title="38">    <span class="cf">if</span>((agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">2</span> <span class="op">||</span><span class="st"> </span>agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">3</span> ) <span class="op">&amp;</span><span class="st"> </span>agent2<span class="op">$</span>biostate<span class="op">==</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>contagionProb)</a>
+<a class="sourceLine" id="cb40-39" title="39">    {</a>
+<a class="sourceLine" id="cb40-40" title="40">      pool[[ sneezeOn[i,<span class="dv">2</span>] ]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(agent2,<span class="dv">2</span>)<span class="co">##infect!</span></a>
+<a class="sourceLine" id="cb40-41" title="41">    }</a>
+<a class="sourceLine" id="cb40-42" title="42">      </a>
+<a class="sourceLine" id="cb40-43" title="43">  }</a>
+<a class="sourceLine" id="cb40-44" title="44">    <span class="co">##increment each agent 1-day.</span></a>
+<a class="sourceLine" id="cb40-45" title="45">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb40-46" title="46">    {</a>
+<a class="sourceLine" id="cb40-47" title="47">      pool[[i]] &lt;-<span class="st"> </span><span class="kw">updateAgent</span>(pool[[i]])</a>
+<a class="sourceLine" id="cb40-48" title="48">    }</a>
+<a class="sourceLine" id="cb40-49" title="49">  </a>
+<a class="sourceLine" id="cb40-50" title="50">    distrib &lt;-<span class="st"> </span><span class="kw">table</span>(<span class="kw">factor</span>(<span class="kw">sapply</span>(pool,<span class="dt">FUN=</span><span class="cf">function</span>(x){x<span class="op">$</span>biostate}),<span class="dt">levels=</span><span class="dv">1</span><span class="op">:</span><span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb40-51" title="51">    disthistory[day,] &lt;-<span class="st"> </span>distrib</a>
+<a class="sourceLine" id="cb40-52" title="52"></a>
+<a class="sourceLine" id="cb40-53" title="53">}</a>
+<a class="sourceLine" id="cb40-54" title="54"></a>
+<a class="sourceLine" id="cb40-55" title="55"><span class="co">#barplot(t(disthistory),col=1:7)</span></a>
+<a class="sourceLine" id="cb40-56" title="56">disthist.df &lt;-<span class="kw">as.data.frame</span>(disthistory)</a>
+<a class="sourceLine" id="cb40-57" title="57"><span class="kw">colnames</span>(disthist.df) &lt;-<span class="st"> </span>STATENAMES</a>
+<a class="sourceLine" id="cb40-58" title="58">disthist.df<span class="op">$</span>day &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(disthistory)</a>
+<a class="sourceLine" id="cb40-59" title="59"></a>
+<a class="sourceLine" id="cb40-60" title="60"></a>
+<a class="sourceLine" id="cb40-61" title="61">show &lt;-<span class="st"> </span>disthist.df[<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">5</span><span class="op">*</span>(<span class="dv">1</span><span class="op">:</span>(day<span class="op">/</span><span class="dv">5</span>))),<span class="kw">c</span>(<span class="dv">8</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>)]</a>
+<a class="sourceLine" id="cb40-62" title="62"><span class="kw">print</span>(<span class="kw">kable</span>(show))</a></code></pre></div>
+<pre><code>## 
+## 
+##       day   Unexposed   Asymptomatic &amp; contagious   Symptomatic and contagious   Symptomatic and not contagious   Post-COVID immune   Naturally immune   Death
+## ---  ----  ----------  --------------------------  ---------------------------  -------------------------------  ------------------  -----------------  ------
+## 1       1         480                          11                            0                                0                   0                  9       0
+## 5       5         255                         223                            8                                0                   5                  9       0
+## 10     10           3                         264                          106                               11                 107                  9       0
+## 15     15           0                          31                          131                               76                 250                  9       3
+## 20     20           0                           0                           33                               86                 365                  9       7
+## 25     25           0                           0                            1                               21                 459                  9      10
+## 30     30           0                           0                            0                                0                 481                  9      10
+## 35     35           0                           0                            0                                0                 481                  9      10
+## 40     40           0                           0                            0                                0                 481                  9      10
+## 45     45           0                           0                            0                                0                 481                  9      10
+## 50     50           0                           0                            0                                0                 481                  9      10</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" title="1">histlong &lt;-<span class="st"> </span><span class="kw">melt</span>(disthist.df,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>)</a>
+<a class="sourceLine" id="cb42-2" title="2"></a>
+<a class="sourceLine" id="cb42-3" title="3"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">fill=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">position=</span><span class="st">&quot;stack&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb42-4" title="4"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-11-1.png" width="960" /></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1"><span class="co">##make the SIR plot:</span></a>
+<a class="sourceLine" id="cb43-2" title="2">sir &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">day=</span>disthist.df<span class="op">$</span>day,</a>
+<a class="sourceLine" id="cb43-3" title="3">                  <span class="dt">susceptible =</span> disthist.df<span class="op">$</span>Unexposed,</a>
+<a class="sourceLine" id="cb43-4" title="4">                  <span class="dt">infected =</span> disthist.df[,<span class="dv">2</span>]<span class="op">+</span>disthist.df[,<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb43-5" title="5">                  <span class="dt">recovered =</span> <span class="kw">rowSums</span>(disthist.df[,<span class="dv">4</span><span class="op">:</span><span class="dv">7</span>]))</a>
+<a class="sourceLine" id="cb43-6" title="6"></a>
+<a class="sourceLine" id="cb43-7" title="7">plot0 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">melt</span>(sir,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>),<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">group=</span>variable,<span class="dt">y=</span>value,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="dt">label=</span><span class="st">&quot;Initial model with complete contact between agents&quot;</span>)</a>
+<a class="sourceLine" id="cb43-8" title="8"><span class="kw">print</span>(plot0)</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-11-2.png" width="960" /></p>
+<p>In this simulation, we can see the ‘infected’ proportion quickly rises, and within about 25 days the entire population has had the disease. We can also look at the daily change, which are the numbers that are often reported, at least to a first approximation. This is “the curve” that we would like to flatten.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1">cases &lt;-<span class="st"> </span>sir<span class="op">$</span>infected<span class="op">+</span>sir<span class="op">$</span>recovered</a>
+<a class="sourceLine" id="cb44-2" title="2">cases.daily &lt;-<span class="st"> </span>cases[<span class="op">-</span><span class="dv">1</span>] <span class="op">-</span><span class="st"> </span>cases[<span class="op">-</span><span class="kw">length</span>(cases)]</a>
+<a class="sourceLine" id="cb44-3" title="3"><span class="kw">plot</span>(cases.daily,<span class="dt">type=</span><span class="st">&quot;h&quot;</span>,<span class="dt">xlab=</span><span class="st">&quot;Day&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Daily new cases&quot;</span>)</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-12-1.png" width="768" /></p>
+<p>This captures the steep rise initially, followed by an asymptote. It also captures the phenomena that not all people get infected–here we end at around 75%.</p>
+</div>
+<div id="incorporating-a-social-network-into-the-model" class="section level2">
+<h2>Incorporating a social network into the model</h2>
+<p>This is not quite right, because we’d really expect interactions to be clumpy–you interact with the same people every day, but this model is like the opinion dynamics model in that anyone can interact with anyone. Let’s make a network using preferential attachment to represent that social world. We can make a couple of them and add them together to represent how we each have different types of relationships and interactions–you may be the president of your drama club and so are a central member, but you are also in a pottery class where you don’t talk to very many people (although your teacher does).</p>
+<p>The following function will create a network from numsets independent smallworld networks. In addition, it will create direct connections between any agents steps links apart, to make the network more clumpy. the network shown is a single network with 2 steps. For some reason, the gplot function in sna is pretty slow, so we will re-write it to display our networks much more quickly.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">makeNetwork&lt;-<span class="st"> </span><span class="cf">function</span>(numAgents,<span class="dt">numsets=</span><span class="dv">3</span>,<span class="dt">steps=</span><span class="dv">1</span>,<span class="dt">power=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb45-2" title="2">{</a>
+<a class="sourceLine" id="cb45-3" title="3">  ord &lt;-<span class="st"> </span><span class="kw">sample</span>(numAgents)</a>
+<a class="sourceLine" id="cb45-4" title="4">  tmp&lt;-<span class="kw">as_adjacency_matrix</span>(<span class="kw">sample_pa</span>(numAgents,<span class="dt">power=</span>power),<span class="dt">sparse=</span>F)</a>
+<a class="sourceLine" id="cb45-5" title="5">  tmp &lt;-<span class="st"> </span>tmp <span class="op">+</span><span class="st"> </span><span class="kw">t</span>(tmp)</a>
+<a class="sourceLine" id="cb45-6" title="6">  tmp &lt;-<span class="st"> </span>tmp[ord,ord]</a>
+<a class="sourceLine" id="cb45-7" title="7">  <span class="cf">if</span>(numsets<span class="op">&gt;</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb45-8" title="8">  {</a>
+<a class="sourceLine" id="cb45-9" title="9">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span>numsets)</a>
+<a class="sourceLine" id="cb45-10" title="10">  {</a>
+<a class="sourceLine" id="cb45-11" title="11">    ord &lt;-<span class="st"> </span><span class="kw">sample</span>(numAgents)</a>
+<a class="sourceLine" id="cb45-12" title="12">    sn2 &lt;-<span class="kw">as_adjacency_matrix</span>(<span class="kw">sample_pa</span>(numAgents,<span class="dt">power=</span>power),<span class="dt">sparse=</span>F)[ord,ord]</a>
+<a class="sourceLine" id="cb45-13" title="13">    tmp &lt;-<span class="st"> </span>tmp <span class="op">+</span><span class="st"> </span>sn2 <span class="op">+</span><span class="st"> </span><span class="kw">t</span>(sn2)</a>
+<a class="sourceLine" id="cb45-14" title="14">    </a>
+<a class="sourceLine" id="cb45-15" title="15">   }</a>
+<a class="sourceLine" id="cb45-16" title="16">  }</a>
+<a class="sourceLine" id="cb45-17" title="17">  <span class="cf">if</span>(steps<span class="op">&gt;</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb45-18" title="18">  {</a>
+<a class="sourceLine" id="cb45-19" title="19">   <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span>steps)</a>
+<a class="sourceLine" id="cb45-20" title="20">   {</a>
+<a class="sourceLine" id="cb45-21" title="21">      tmp &lt;-<span class="st"> </span>tmp <span class="op">+</span><span class="st"> </span>tmp <span class="op">%*%</span><span class="st"> </span>tmp  <span class="co">## iterate to neighbors</span></a>
+<a class="sourceLine" id="cb45-22" title="22">   }</a>
+<a class="sourceLine" id="cb45-23" title="23">  }</a>
+<a class="sourceLine" id="cb45-24" title="24">  (tmp<span class="op">&gt;</span><span class="dv">0</span>)<span class="op">+</span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb45-25" title="25">}</a>
+<a class="sourceLine" id="cb45-26" title="26"></a>
+<a class="sourceLine" id="cb45-27" title="27"></a>
+<a class="sourceLine" id="cb45-28" title="28">mygplot &lt;-<span class="st"> </span><span class="cf">function</span>(coord, network,states,<span class="dt">main=</span><span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb45-29" title="29">{</a>
+<a class="sourceLine" id="cb45-30" title="30">  <span class="cf">if</span>(<span class="kw">is.null</span>(coord))</a>
+<a class="sourceLine" id="cb45-31" title="31">  {</a>
+<a class="sourceLine" id="cb45-32" title="32">    coord  &lt;-<span class="st"> </span><span class="kw">gplot.layout.fruchtermanreingold</span>(network,<span class="dt">layout.par=</span><span class="kw">list</span>(<span class="dt">niter=</span><span class="dv">500</span>))</a>
+<a class="sourceLine" id="cb45-33" title="33">  }</a>
+<a class="sourceLine" id="cb45-34" title="34">  </a>
+<a class="sourceLine" id="cb45-35" title="35">  newmin &lt;-<span class="st"> </span><span class="kw">mean</span>(coord[,<span class="dv">2</span>]) <span class="op">-</span><span class="st"> </span>(<span class="op">-</span><span class="kw">min</span>(coord[,<span class="dv">2</span>]) <span class="op">+</span><span class="st"> </span><span class="kw">mean</span>(coord[,<span class="dv">2</span>])) <span class="op">*</span><span class="st"> </span><span class="fl">1.4</span></a>
+<a class="sourceLine" id="cb45-36" title="36">   palette=<span class="kw">c</span>(<span class="st">&quot;white&quot;</span>,<span class="st">&quot;yellow&quot;</span>,<span class="st">&quot;red&quot;</span>,<span class="st">&quot;green&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>,<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;black&quot;</span>)</a>
+<a class="sourceLine" id="cb45-37" title="37">   <span class="kw">plot</span>(coord,<span class="dt">col=</span><span class="st">&quot;black&quot;</span>,<span class="dt">bty=</span><span class="st">&quot;n&quot;</span>,<span class="dt">pch=</span><span class="dv">16</span>,<span class="dt">cex=</span><span class="fl">2.7</span>,<span class="dt">xaxt=</span><span class="st">&quot;n&quot;</span>,<span class="dt">yaxt=</span><span class="st">&quot;n&quot;</span>,<span class="dt">main=</span>main,<span class="dt">xlab=</span><span class="st">&quot;&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;&quot;</span>,<span class="dt">axes=</span>F,</a>
+<a class="sourceLine" id="cb45-38" title="38">        <span class="dt">ylim=</span><span class="kw">c</span>(newmin,<span class="kw">max</span>(coord[,<span class="dv">2</span>])),<span class="dt">type=</span><span class="st">&quot;n&quot;</span>)</a>
+<a class="sourceLine" id="cb45-39" title="39">   </a>
+<a class="sourceLine" id="cb45-40" title="40">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(network))</a>
+<a class="sourceLine" id="cb45-41" title="41">     <span class="kw">segments</span>(coord[i,<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb45-42" title="42">            coord[i,<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb45-43" title="43">            coord[network[i,]<span class="op">==</span><span class="dv">1</span>,<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb45-44" title="44">            coord[network[i,]<span class="op">==</span><span class="dv">1</span>,<span class="dv">2</span>],<span class="dt">col=</span><span class="st">&quot;grey40&quot;</span>)</a>
+<a class="sourceLine" id="cb45-45" title="45"></a>
+<a class="sourceLine" id="cb45-46" title="46">       <span class="kw">points</span>(coord,<span class="dt">pch=</span><span class="dv">16</span>,<span class="dt">cex=</span><span class="fl">2.3</span>,<span class="dt">col=</span> palette[states])</a>
+<a class="sourceLine" id="cb45-47" title="47">              </a>
+<a class="sourceLine" id="cb45-48" title="48">       <span class="kw">points</span>(coord,<span class="dt">pch=</span><span class="dv">1</span>,<span class="dt">cex=</span><span class="fl">2.3</span>,<span class="dt">col=</span><span class="st">&quot;black&quot;</span>)</a>
+<a class="sourceLine" id="cb45-49" title="49">      <span class="kw">legend</span>(<span class="kw">mean</span>(coord[,<span class="dv">1</span>]),<span class="kw">min</span>(coord[,<span class="dv">2</span>]),<span class="dt">bty=</span><span class="st">&#39;n&#39;</span>,<span class="dt">y.intersp=</span>.<span class="dv">7</span>,<span class="dt">cex=</span>.<span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb45-50" title="50">              STATENAMES, <span class="dt">pch=</span><span class="dv">16</span>,<span class="dt">col=</span>palette)</a>
+<a class="sourceLine" id="cb45-51" title="51">              </a>
+<a class="sourceLine" id="cb45-52" title="52">      <span class="kw">return</span> (coord)</a>
+<a class="sourceLine" id="cb45-53" title="53">}</a>
+<a class="sourceLine" id="cb45-54" title="54"><span class="kw">set.seed</span>(<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb45-55" title="55">socialnetwork &lt;-<span class="st"> </span><span class="kw">makeNetwork</span>(<span class="dv">1000</span>,<span class="dt">numsets=</span><span class="dv">1</span>,<span class="dt">power=</span>.<span class="dv">59</span>,<span class="dt">steps=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb45-56" title="56"></a>
+<a class="sourceLine" id="cb45-57" title="57">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span><span class="ot">NULL</span>,socialnetwork,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(socialnetwork)),<span class="dt">main=</span><span class="st">&quot;Initial state&quot;</span>)</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-13-1.png" width="1728" /></p>
+<p>Now, let’s just say that we sample interactions MOSTLY from this network. For example 90% of interactions come from the network, and 10% are random, which would represent mostly-contact with your direct family, while 50-50 would involve much more community contact. This lets us automatically combine a network probabilistically with a random one.</p>
+</div>
+<div id="simulating-with-a-social-network." class="section level2">
+<h2>Simulating with a social network.</h2>
+<p>Now, we can run the same simulation, using the social network with more limited connections.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1"><span class="kw">set.seed</span>(<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb46-2" title="2">numAgents &lt;-<span class="st"> </span><span class="dv">500</span></a>
+<a class="sourceLine" id="cb46-3" title="3">naturalImmunity &lt;-<span class="st"> </span><span class="fl">.01</span>  <span class="co">#1 % naturally immune</span></a>
+<a class="sourceLine" id="cb46-4" title="4">numInteractions &lt;-<span class="st">  </span><span class="dv">10</span> <span class="co">##how many interactions per day per agent on average?</span></a>
+<a class="sourceLine" id="cb46-5" title="5">numDays &lt;-<span class="st"> </span><span class="dv">50</span></a>
+<a class="sourceLine" id="cb46-6" title="6">contagionProb &lt;-<span class="st"> </span><span class="fl">.1</span>    <span class="co">##normal contagion probability</span></a>
+<a class="sourceLine" id="cb46-7" title="7">sampleFromNetwork &lt;-<span class="st"> </span><span class="fl">.98</span></a>
+<a class="sourceLine" id="cb46-8" title="8"></a>
+<a class="sourceLine" id="cb46-9" title="9">plotNetwork &lt;-T</a>
+<a class="sourceLine" id="cb46-10" title="10"></a>
+<a class="sourceLine" id="cb46-11" title="11">socialnetwork &lt;-<span class="kw">makeNetwork</span>(numAgents,<span class="dt">numsets=</span><span class="dv">1</span>,<span class="dt">power=</span>.<span class="dv">5</span>,<span class="dt">steps=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb46-12" title="12"><span class="cf">if</span>(plotNetwork)</a>
+<a class="sourceLine" id="cb46-13" title="13">{</a>
+<a class="sourceLine" id="cb46-14" title="14">  cc &lt;-<span class="kw">mygplot</span>(<span class="dt">coord=</span><span class="ot">NULL</span>,socialnetwork,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(socialnetwork)),<span class="dt">main=</span><span class="st">&quot;Initial state&quot;</span>)</a>
+<a class="sourceLine" id="cb46-15" title="15">}  </a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1">disthistory &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>,<span class="dt">ncol=</span>STATES,<span class="dt">nrow=</span>numDays)</a>
+<a class="sourceLine" id="cb47-2" title="2"></a>
+<a class="sourceLine" id="cb47-3" title="3">pool &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb47-4" title="4"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb47-5" title="5">{</a>
+<a class="sourceLine" id="cb47-6" title="6">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb47-7" title="7">                         <span class="dt">biostate=</span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">6</span>),</a>
+<a class="sourceLine" id="cb47-8" title="8">                          <span class="dt">p=</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">-</span>naturalImmunity, naturalImmunity),<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb47-9" title="9">}</a>
+<a class="sourceLine" id="cb47-10" title="10"></a>
+<a class="sourceLine" id="cb47-11" title="11"></a>
+<a class="sourceLine" id="cb47-12" title="12"><span class="co">##infect patient 0</span></a>
+<a class="sourceLine" id="cb47-13" title="13">numInfected &lt;-<span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb47-14" title="14"><span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">sample</span>(numAgents,numInfected))</a>
+<a class="sourceLine" id="cb47-15" title="15">{</a>
+<a class="sourceLine" id="cb47-16" title="16">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(pool[[i]],<span class="dv">2</span>) <span class="co">##infect this person</span></a>
+<a class="sourceLine" id="cb47-17" title="17">}</a>
+<a class="sourceLine" id="cb47-18" title="18"></a>
+<a class="sourceLine" id="cb47-19" title="19"></a>
+<a class="sourceLine" id="cb47-20" title="20"><span class="kw">set.seed</span>(<span class="dv">100</span>) <span class="co">#reset simulation seed so it is the same as previous.</span></a>
+<a class="sourceLine" id="cb47-21" title="21"></a>
+<a class="sourceLine" id="cb47-22" title="22"></a>
+<a class="sourceLine" id="cb47-23" title="23"></a>
+<a class="sourceLine" id="cb47-24" title="24"><span class="cf">for</span>(day <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numDays)</a>
+<a class="sourceLine" id="cb47-25" title="25">{</a>
+<a class="sourceLine" id="cb47-26" title="26"><span class="co">##who are you going to talk to today.</span></a>
+<a class="sourceLine" id="cb47-27" title="27">    sneezers &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">each=</span>numInteractions)</a>
+<a class="sourceLine" id="cb47-28" title="28">    sneezedons &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>,<span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb47-29" title="29">    </a>
+<a class="sourceLine" id="cb47-30" title="30">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb47-31" title="31">      {</a>
+<a class="sourceLine" id="cb47-32" title="32">      <span class="cf">if</span>(<span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>(<span class="dv">1</span><span class="op">-</span>sampleFromNetwork))</a>
+<a class="sourceLine" id="cb47-33" title="33">      {</a>
+<a class="sourceLine" id="cb47-34" title="34"></a>
+<a class="sourceLine" id="cb47-35" title="35">        sneezedons[i] &lt;-<span class="st"> </span><span class="kw">sample</span>(numAgents,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb47-36" title="36">      }<span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb47-37" title="37">        sneezedons[i] &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">prob=</span>socialnetwork[sneezers[i],],<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb47-38" title="38">      }</a>
+<a class="sourceLine" id="cb47-39" title="39">     }</a>
+<a class="sourceLine" id="cb47-40" title="40">      </a>
+<a class="sourceLine" id="cb47-41" title="41">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb47-42" title="42">  {</a>
+<a class="sourceLine" id="cb47-43" title="43">    agent1 &lt;-<span class="st"> </span>pool[[ sneezers[i] ]]</a>
+<a class="sourceLine" id="cb47-44" title="44">    agent2 &lt;-<span class="st"> </span>pool[[ sneezedons[i] ]]</a>
+<a class="sourceLine" id="cb47-45" title="45">  </a>
+<a class="sourceLine" id="cb47-46" title="46">    </a>
+<a class="sourceLine" id="cb47-47" title="47">    <span class="co">##this constitutes the rules of infection.</span></a>
+<a class="sourceLine" id="cb47-48" title="48">    <span class="cf">if</span>((agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">2</span> <span class="op">||</span><span class="st"> </span>agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">3</span> ) <span class="op">&amp;</span><span class="st"> </span>agent2<span class="op">$</span>biostate<span class="op">==</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>contagionProb)</a>
+<a class="sourceLine" id="cb47-49" title="49">    {</a>
+<a class="sourceLine" id="cb47-50" title="50">         pool[[ sneezedons[i] ]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(agent2,<span class="dv">2</span>)<span class="co">##infect!</span></a>
+<a class="sourceLine" id="cb47-51" title="51">    }</a>
+<a class="sourceLine" id="cb47-52" title="52">      </a>
+<a class="sourceLine" id="cb47-53" title="53">  }</a>
+<a class="sourceLine" id="cb47-54" title="54">    <span class="co">##increment each agent 1-day.</span></a>
+<a class="sourceLine" id="cb47-55" title="55">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb47-56" title="56">    {</a>
+<a class="sourceLine" id="cb47-57" title="57">       pool[[i]] &lt;-<span class="st"> </span><span class="kw">updateAgent</span>(pool[[i]])</a>
+<a class="sourceLine" id="cb47-58" title="58">    }</a>
+<a class="sourceLine" id="cb47-59" title="59">  </a>
+<a class="sourceLine" id="cb47-60" title="60">    states &lt;-<span class="st"> </span><span class="kw">sapply</span>(pool,<span class="dt">FUN=</span><span class="cf">function</span>(x){x<span class="op">$</span>biostate})</a>
+<a class="sourceLine" id="cb47-61" title="61">    distrib &lt;-<span class="st"> </span><span class="kw">table</span>(<span class="kw">factor</span>(states,<span class="dt">levels=</span><span class="dv">1</span><span class="op">:</span><span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb47-62" title="62">    disthistory[day,] &lt;-<span class="st"> </span>distrib</a>
+<a class="sourceLine" id="cb47-63" title="63">   <span class="cf">if</span>(plotNetwork)</a>
+<a class="sourceLine" id="cb47-64" title="64">   {</a>
+<a class="sourceLine" id="cb47-65" title="65">       <span class="kw">mygplot</span>(cc,socialnetwork,states,<span class="dt">main=</span><span class="kw">paste</span>(<span class="st">&quot;Day&quot;</span>,day))</a>
+<a class="sourceLine" id="cb47-66" title="66"></a>
+<a class="sourceLine" id="cb47-67" title="67">   }</a>
+<a class="sourceLine" id="cb47-68" title="68">    </a>
+<a class="sourceLine" id="cb47-69" title="69">       </a>
+<a class="sourceLine" id="cb47-70" title="70">}</a></code></pre></div>
+<img src="support_files/figure-html-base/base.gif" />
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1"><span class="co">#barplot(t(disthistory),col=1:7)</span></a></code></pre></div>
+<p>With the same starting configuration, we can see that the infection rate is slower, and in fact a few people remain uninfected after 50 days. This code animates the model over time (this makes the simulation take longer), and we can see that it spreads on branches. People who escape infection on a branch cannot easily be reached, and ultimately may be spared.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" title="1">disthist.df &lt;-<span class="kw">as.data.frame</span>(disthistory)</a>
+<a class="sourceLine" id="cb49-2" title="2"><span class="kw">colnames</span>(disthist.df) &lt;-<span class="st"> </span>STATENAMES</a>
+<a class="sourceLine" id="cb49-3" title="3">disthist.df<span class="op">$</span>day &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(disthistory)</a>
+<a class="sourceLine" id="cb49-4" title="4">histlong &lt;-<span class="st"> </span><span class="kw">melt</span>(disthist.df,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>)</a>
+<a class="sourceLine" id="cb49-5" title="5"></a>
+<a class="sourceLine" id="cb49-6" title="6"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">fill=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">position=</span><span class="st">&quot;stack&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb49-7" title="7"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-15-1.png" width="768" /></p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1"><span class="co">##make the SIR plot:</span></a>
+<a class="sourceLine" id="cb50-2" title="2">sir &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">day=</span>disthist.df<span class="op">$</span>day,</a>
+<a class="sourceLine" id="cb50-3" title="3">                  <span class="dt">susceptible =</span> disthist.df<span class="op">$</span>Unexposed,</a>
+<a class="sourceLine" id="cb50-4" title="4">                  <span class="dt">infected =</span> disthist.df[,<span class="dv">2</span>]<span class="op">+</span>disthist.df[,<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb50-5" title="5">                  <span class="dt">recovered =</span> <span class="kw">rowSums</span>(disthist.df[,<span class="dv">4</span><span class="op">:</span><span class="dv">7</span>]))</a>
+<a class="sourceLine" id="cb50-6" title="6"></a>
+<a class="sourceLine" id="cb50-7" title="7">plot1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">melt</span>(sir,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>),<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">group=</span>variable,<span class="dt">y=</span>value,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="dt">label=</span><span class="st">&quot;Social network model&quot;</span>)</a>
+<a class="sourceLine" id="cb50-8" title="8"><span class="kw">print</span>(plot1)</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-15-2.png" width="768" /></p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" title="1"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">group=</span>variable,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-15-3.png" width="768" /></p>
+</div>
+<div id="changing-behavior-based-on-disease-state" class="section level2">
+<h2>Changing behavior based on disease state</h2>
+<p>We can now start asking other questions. For example, what if the symptomatic people do not interact anymore? This just means re-writing the code where people get infected. This is probably realistic–when you get infected, you stay at home and stop interacting. It may be the case that those you interact with have a higher chance of getting the disease if you are sneezing and coughing, but we will keep the contagionProb the same.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" title="1"><span class="kw">set.seed</span>(<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb52-2" title="2">numAgents &lt;-<span class="st"> </span><span class="dv">500</span></a>
+<a class="sourceLine" id="cb52-3" title="3">naturalImmunity &lt;-<span class="st"> </span><span class="fl">.01</span>  <span class="co">#1 % naturally immune</span></a>
+<a class="sourceLine" id="cb52-4" title="4">numInteractions &lt;-<span class="st">  </span><span class="dv">10</span> <span class="co">##how many interactions per day per agent on average?</span></a>
+<a class="sourceLine" id="cb52-5" title="5">numDays &lt;-<span class="st"> </span><span class="dv">50</span></a>
+<a class="sourceLine" id="cb52-6" title="6">contagionProb &lt;-<span class="st"> </span><span class="fl">.1</span>    <span class="co">##normal contagion probability</span></a>
+<a class="sourceLine" id="cb52-7" title="7">sampleFromNetwork &lt;-<span class="st"> </span><span class="fl">.98</span></a>
+<a class="sourceLine" id="cb52-8" title="8"></a>
+<a class="sourceLine" id="cb52-9" title="9"></a>
+<a class="sourceLine" id="cb52-10" title="10">plotNetwork &lt;-<span class="st"> </span><span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb52-11" title="11"></a>
+<a class="sourceLine" id="cb52-12" title="12">socialnetwork &lt;-<span class="kw">makeNetwork</span>(numAgents,<span class="dt">numsets=</span><span class="dv">1</span>,<span class="dt">power=</span>.<span class="dv">5</span>,<span class="dt">steps=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb52-13" title="13"><span class="cf">if</span>(plotNetwork)</a>
+<a class="sourceLine" id="cb52-14" title="14">{</a>
+<a class="sourceLine" id="cb52-15" title="15">  cc &lt;-<span class="kw">mygplot</span>(<span class="dt">coord=</span><span class="ot">NULL</span>,socialnetwork,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(socialnetwork)),<span class="dt">main=</span><span class="st">&quot;Initial state&quot;</span>)</a>
+<a class="sourceLine" id="cb52-16" title="16"></a>
+<a class="sourceLine" id="cb52-17" title="17">}</a>
+<a class="sourceLine" id="cb52-18" title="18">  </a>
+<a class="sourceLine" id="cb52-19" title="19">  disthistory &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>,<span class="dt">ncol=</span>STATES,<span class="dt">nrow=</span>numDays)</a>
+<a class="sourceLine" id="cb52-20" title="20"></a>
+<a class="sourceLine" id="cb52-21" title="21">pool &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb52-22" title="22"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb52-23" title="23">{</a>
+<a class="sourceLine" id="cb52-24" title="24">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb52-25" title="25">                         <span class="dt">biostate=</span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">6</span>),</a>
+<a class="sourceLine" id="cb52-26" title="26">                          <span class="dt">p=</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">-</span>naturalImmunity, naturalImmunity),<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb52-27" title="27">}</a>
+<a class="sourceLine" id="cb52-28" title="28"></a>
+<a class="sourceLine" id="cb52-29" title="29"><span class="co">##infect patient 0</span></a>
+<a class="sourceLine" id="cb52-30" title="30">numInfected &lt;-<span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb52-31" title="31"><span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">sample</span>(numAgents,numInfected))</a>
+<a class="sourceLine" id="cb52-32" title="32">{</a>
+<a class="sourceLine" id="cb52-33" title="33">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(pool[[i]],<span class="dv">2</span>) <span class="co">##infect this person</span></a>
+<a class="sourceLine" id="cb52-34" title="34">}</a>
+<a class="sourceLine" id="cb52-35" title="35"></a>
+<a class="sourceLine" id="cb52-36" title="36"><span class="cf">for</span>(day <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numDays)</a>
+<a class="sourceLine" id="cb52-37" title="37">{</a>
+<a class="sourceLine" id="cb52-38" title="38"><span class="co">##who are you going to talk to today.</span></a>
+<a class="sourceLine" id="cb52-39" title="39">    sneezers &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">each=</span>numInteractions)</a>
+<a class="sourceLine" id="cb52-40" title="40">    sneezedons &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>,<span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb52-41" title="41">    </a>
+<a class="sourceLine" id="cb52-42" title="42">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb52-43" title="43">      {</a>
+<a class="sourceLine" id="cb52-44" title="44">      <span class="cf">if</span>(<span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>(<span class="dv">1</span><span class="op">-</span>sampleFromNetwork) )</a>
+<a class="sourceLine" id="cb52-45" title="45">      {</a>
+<a class="sourceLine" id="cb52-46" title="46">        sneezedons[i] &lt;-<span class="st"> </span><span class="kw">sample</span>(numAgents,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb52-47" title="47">      }<span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb52-48" title="48">        sneezedons[i] &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">prob=</span>socialnetwork[sneezers[i],],<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb52-49" title="49">      }</a>
+<a class="sourceLine" id="cb52-50" title="50">     }</a>
+<a class="sourceLine" id="cb52-51" title="51">      </a>
+<a class="sourceLine" id="cb52-52" title="52">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb52-53" title="53">  {</a>
+<a class="sourceLine" id="cb52-54" title="54">    agent1 &lt;-<span class="st"> </span>pool[[ sneezers[i] ]]</a>
+<a class="sourceLine" id="cb52-55" title="55">    agent2 &lt;-<span class="st"> </span>pool[[ sneezedons[i] ]]</a>
+<a class="sourceLine" id="cb52-56" title="56">  </a>
+<a class="sourceLine" id="cb52-57" title="57">    </a>
+<a class="sourceLine" id="cb52-58" title="58">    <span class="co">##this constitutes the rules of infection.</span></a>
+<a class="sourceLine" id="cb52-59" title="59">    <span class="cf">if</span>((agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">2</span> ) <span class="op">&amp;</span><span class="st"> </span>agent2<span class="op">$</span>biostate<span class="op">==</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>contagionProb)</a>
+<a class="sourceLine" id="cb52-60" title="60">    {</a>
+<a class="sourceLine" id="cb52-61" title="61">         pool[[ sneezedons[i] ]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(agent2,<span class="dv">2</span>)<span class="co">##infect!</span></a>
+<a class="sourceLine" id="cb52-62" title="62">    }</a>
+<a class="sourceLine" id="cb52-63" title="63">      </a>
+<a class="sourceLine" id="cb52-64" title="64">  }</a>
+<a class="sourceLine" id="cb52-65" title="65">    <span class="co">##increment each agent 1-day.</span></a>
+<a class="sourceLine" id="cb52-66" title="66">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb52-67" title="67">    {</a>
+<a class="sourceLine" id="cb52-68" title="68">      pool[[i]] &lt;-<span class="st"> </span><span class="kw">updateAgent</span>(pool[[i]])</a>
+<a class="sourceLine" id="cb52-69" title="69">    }</a>
+<a class="sourceLine" id="cb52-70" title="70">  </a>
+<a class="sourceLine" id="cb52-71" title="71">    states &lt;-<span class="st"> </span><span class="kw">sapply</span>(pool,<span class="dt">FUN=</span><span class="cf">function</span>(x){x<span class="op">$</span>biostate})</a>
+<a class="sourceLine" id="cb52-72" title="72">    distrib &lt;-<span class="st"> </span><span class="kw">table</span>(<span class="kw">factor</span>(states,<span class="dt">levels=</span><span class="dv">1</span><span class="op">:</span><span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb52-73" title="73">    disthistory[day,] &lt;-<span class="st"> </span>distrib</a>
+<a class="sourceLine" id="cb52-74" title="74">   <span class="cf">if</span>(plotNetwork)</a>
+<a class="sourceLine" id="cb52-75" title="75">   {</a>
+<a class="sourceLine" id="cb52-76" title="76">       <span class="kw">mygplot</span>(cc,socialnetwork,states,<span class="dt">main=</span><span class="kw">paste</span>(<span class="st">&quot;Day&quot;</span>,day))</a>
+<a class="sourceLine" id="cb52-77" title="77"></a>
+<a class="sourceLine" id="cb52-78" title="78">   }</a>
+<a class="sourceLine" id="cb52-79" title="79">    </a>
+<a class="sourceLine" id="cb52-80" title="80">       </a>
+<a class="sourceLine" id="cb52-81" title="81">}</a>
+<a class="sourceLine" id="cb52-82" title="82"></a>
+<a class="sourceLine" id="cb52-83" title="83"><span class="co">#barplot(t(disthistory),col=1:7)</span></a></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" title="1">disthist.df &lt;-<span class="kw">as.data.frame</span>(disthistory)</a>
+<a class="sourceLine" id="cb53-2" title="2"><span class="kw">colnames</span>(disthist.df) &lt;-<span class="st"> </span>STATENAMES</a>
+<a class="sourceLine" id="cb53-3" title="3">disthist.df<span class="op">$</span>day &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(disthistory)</a>
+<a class="sourceLine" id="cb53-4" title="4">histlong &lt;-<span class="st"> </span><span class="kw">melt</span>(disthist.df,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>)</a>
+<a class="sourceLine" id="cb53-5" title="5"></a>
+<a class="sourceLine" id="cb53-6" title="6"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">fill=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">position=</span><span class="st">&quot;stack&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb53-7" title="7"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-17-1.png" width="768" /></p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1"><span class="co">##make the SIR plot:</span></a>
+<a class="sourceLine" id="cb54-2" title="2">sir &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">day=</span>disthist.df<span class="op">$</span>day,</a>
+<a class="sourceLine" id="cb54-3" title="3">                  <span class="dt">susceptible =</span> disthist.df<span class="op">$</span>Unexposed,</a>
+<a class="sourceLine" id="cb54-4" title="4">                  <span class="dt">infected =</span> disthist.df[,<span class="dv">2</span>]<span class="op">+</span>disthist.df[,<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb54-5" title="5">                  <span class="dt">recovered =</span> <span class="kw">rowSums</span>(disthist.df[,<span class="dv">4</span><span class="op">:</span><span class="dv">7</span>]))</a>
+<a class="sourceLine" id="cb54-6" title="6"></a>
+<a class="sourceLine" id="cb54-7" title="7">plot2 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">melt</span>(sir,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>),<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">group=</span>variable,<span class="dt">y=</span>value,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="dt">label=</span><span class="st">&quot;Social network model with limited contact once symptomatic&quot;</span>)</a>
+<a class="sourceLine" id="cb54-8" title="8"><span class="kw">print</span>(plot2)</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-17-2.png" width="768" /></p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" title="1"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">group=</span>variable,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-17-3.png" width="768" /> ## Comparing the three models This seems to be a decent starting point model for furher exploration. Here, the symptomatic people completely quarantine. That is, they decline all interaction and so do not spread the virus. All spreading is done by asymptomatics.</p>
+<p>We can compare these three simulations because I saved the plot functions. Now we can see how each of these change the outcome of the model, showing assumptions about who is interacting with who, and during what stage, do indeed matter. These are difficult to implement without an agent-based model, and most of the current COVID-19 models do not consider these things.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" title="1"><span class="kw">library</span>(gridExtra)</a></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;gridExtra&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     combine</code></pre>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" title="1"><span class="kw">grid.arrange</span>(plot0,plot1,plot2)</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-18-1.png" width="768" /></p>
+</div>
+<div id="modeling-policy-changes" class="section level2">
+<h2>Modeling policy changes</h2>
+<p>We can try also change parameters or settings for some number of days; like a shelter-in-place order and lift, to explore how social or gov’t actions might influence behaviors. To do this, we will create a vector of parameters, to allow us to use a different parameter each day. To start, we will just change the number of interactions, to simulate a stay-at-home order and lift.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1"><span class="kw">set.seed</span>(<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb60-2" title="2">numAgents &lt;-<span class="st"> </span><span class="dv">500</span></a>
+<a class="sourceLine" id="cb60-3" title="3">naturalImmunity &lt;-<span class="st"> </span><span class="fl">.01</span>  <span class="co">#1 % naturally immune</span></a>
+<a class="sourceLine" id="cb60-4" title="4">numInteractions &lt;-<span class="st">  </span><span class="dv">10</span> <span class="co">##how many interactions per day per agent on average?</span></a>
+<a class="sourceLine" id="cb60-5" title="5">numDays &lt;-<span class="st"> </span><span class="dv">50</span></a>
+<a class="sourceLine" id="cb60-6" title="6"></a>
+<a class="sourceLine" id="cb60-7" title="7"></a>
+<a class="sourceLine" id="cb60-8" title="8">socialnetwork &lt;-<span class="kw">makeNetwork</span>(numAgents,<span class="dt">numsets=</span><span class="dv">1</span>,<span class="dt">power=</span>.<span class="dv">5</span>,<span class="dt">steps=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb60-9" title="9"></a>
+<a class="sourceLine" id="cb60-10" title="10">numInteractions &lt;-<span class="st">  </span><span class="kw">rep</span>(<span class="dv">10</span>,numDays)  <span class="co">##how many interactions per day per agent on average?</span></a>
+<a class="sourceLine" id="cb60-11" title="11">contagionProb &lt;-<span class="st"> </span><span class="kw">rep</span>(.<span class="dv">1</span>,numDays)    <span class="co">##normal contagioun probability after concat</span></a>
+<a class="sourceLine" id="cb60-12" title="12">sampleFromNetwork &lt;-<span class="st"> </span><span class="kw">rep</span>(.<span class="dv">98</span>,numDays)  <span class="co">##how likely you are to stick with &#39;your&#39; network</span></a>
+<a class="sourceLine" id="cb60-13" title="13"></a>
+<a class="sourceLine" id="cb60-14" title="14">numInteractions[<span class="dv">10</span><span class="op">:</span>numDays] &lt;-<span class="st"> </span><span class="dv">3</span>     <span class="co">##quarantiine goes into effect day 3.</span></a>
+<a class="sourceLine" id="cb60-15" title="15">numInteractions[<span class="dv">25</span><span class="op">:</span>numDays] &lt;-<span class="st"> </span><span class="dv">10</span>  <span class="co">##re-open </span></a>
+<a class="sourceLine" id="cb60-16" title="16"></a>
+<a class="sourceLine" id="cb60-17" title="17">plotNetwork &lt;-<span class="st"> </span><span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb60-18" title="18"><span class="co">#re-use previous network</span></a>
+<a class="sourceLine" id="cb60-19" title="19"><span class="co">#socialnetwork &lt;-makeNetwork(numAgents,numsets=1,power=.5)</span></a>
+<a class="sourceLine" id="cb60-20" title="20"></a>
+<a class="sourceLine" id="cb60-21" title="21"></a>
+<a class="sourceLine" id="cb60-22" title="22"><span class="cf">if</span>(plotNetwork)</a>
+<a class="sourceLine" id="cb60-23" title="23">{</a>
+<a class="sourceLine" id="cb60-24" title="24">    cc &lt;-<span class="kw">mygplot</span>(<span class="dt">coord=</span><span class="ot">NULL</span>,socialnetwork,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(socialnetwork)),<span class="dt">main=</span><span class="st">&quot;Initial state&quot;</span>)</a>
+<a class="sourceLine" id="cb60-25" title="25"></a>
+<a class="sourceLine" id="cb60-26" title="26">}</a>
+<a class="sourceLine" id="cb60-27" title="27"></a>
+<a class="sourceLine" id="cb60-28" title="28"></a>
+<a class="sourceLine" id="cb60-29" title="29"></a>
+<a class="sourceLine" id="cb60-30" title="30">disthistory &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>,<span class="dt">ncol=</span><span class="dv">7</span>,<span class="dt">nrow=</span>numDays)</a>
+<a class="sourceLine" id="cb60-31" title="31"></a>
+<a class="sourceLine" id="cb60-32" title="32">pool &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb60-33" title="33"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb60-34" title="34">{</a>
+<a class="sourceLine" id="cb60-35" title="35">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb60-36" title="36">                         <span class="dt">biostate=</span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">6</span>),</a>
+<a class="sourceLine" id="cb60-37" title="37">                          <span class="dt">p=</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">-</span>naturalImmunity, naturalImmunity),<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb60-38" title="38">}</a>
+<a class="sourceLine" id="cb60-39" title="39"></a>
+<a class="sourceLine" id="cb60-40" title="40"><span class="co">##infect patient 0</span></a>
+<a class="sourceLine" id="cb60-41" title="41">numInfected &lt;-<span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb60-42" title="42"><span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">sample</span>(numAgents,numInfected))</a>
+<a class="sourceLine" id="cb60-43" title="43">{</a>
+<a class="sourceLine" id="cb60-44" title="44">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(pool[[i]],<span class="dv">2</span>) <span class="co">##infect this person</span></a>
+<a class="sourceLine" id="cb60-45" title="45">}</a>
+<a class="sourceLine" id="cb60-46" title="46"></a>
+<a class="sourceLine" id="cb60-47" title="47"><span class="cf">for</span>(day <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numDays)</a>
+<a class="sourceLine" id="cb60-48" title="48">{</a>
+<a class="sourceLine" id="cb60-49" title="49"><span class="co">##who are you going to talk to today.</span></a>
+<a class="sourceLine" id="cb60-50" title="50">    sneezers &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">each=</span>numInteractions[day])</a>
+<a class="sourceLine" id="cb60-51" title="51">    sneezedons &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>,<span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb60-52" title="52">    </a>
+<a class="sourceLine" id="cb60-53" title="53">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb60-54" title="54">      {</a>
+<a class="sourceLine" id="cb60-55" title="55">      <span class="cf">if</span>(<span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>(<span class="dv">1</span><span class="op">-</span>sampleFromNetwork[day]) )</a>
+<a class="sourceLine" id="cb60-56" title="56">      {</a>
+<a class="sourceLine" id="cb60-57" title="57">        sneezedons[i] &lt;-<span class="st"> </span><span class="kw">sample</span>(numAgents,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb60-58" title="58">      }<span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb60-59" title="59">        sneezedons[i] &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">prob=</span>socialnetwork[sneezers[i],],<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb60-60" title="60">      }</a>
+<a class="sourceLine" id="cb60-61" title="61">     }</a>
+<a class="sourceLine" id="cb60-62" title="62">      </a>
+<a class="sourceLine" id="cb60-63" title="63">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb60-64" title="64">  {</a>
+<a class="sourceLine" id="cb60-65" title="65">    agent1 &lt;-<span class="st"> </span>pool[[ sneezers[i] ]]</a>
+<a class="sourceLine" id="cb60-66" title="66">    agent2 &lt;-<span class="st"> </span>pool[[ sneezedons[i] ]]</a>
+<a class="sourceLine" id="cb60-67" title="67">  </a>
+<a class="sourceLine" id="cb60-68" title="68">    </a>
+<a class="sourceLine" id="cb60-69" title="69">    <span class="co">##this constitutes the rules of infection.</span></a>
+<a class="sourceLine" id="cb60-70" title="70">    <span class="cf">if</span>((agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">2</span> <span class="op">||</span><span class="st"> </span>agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">3</span> ) <span class="op">&amp;</span><span class="st"> </span>agent2<span class="op">$</span>biostate<span class="op">==</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>contagionProb[day])</a>
+<a class="sourceLine" id="cb60-71" title="71">    {</a>
+<a class="sourceLine" id="cb60-72" title="72">         pool[[ sneezedons[i] ]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(agent2,<span class="dv">2</span>)<span class="co">##infect!</span></a>
+<a class="sourceLine" id="cb60-73" title="73">    }</a>
+<a class="sourceLine" id="cb60-74" title="74">      </a>
+<a class="sourceLine" id="cb60-75" title="75">  }</a>
+<a class="sourceLine" id="cb60-76" title="76">    <span class="co">##increment each agent 1-day.</span></a>
+<a class="sourceLine" id="cb60-77" title="77">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb60-78" title="78">    {</a>
+<a class="sourceLine" id="cb60-79" title="79">      pool[[i]] &lt;-<span class="st"> </span><span class="kw">updateAgent</span>(pool[[i]])</a>
+<a class="sourceLine" id="cb60-80" title="80">    }</a>
+<a class="sourceLine" id="cb60-81" title="81">    </a>
+<a class="sourceLine" id="cb60-82" title="82">    states &lt;-<span class="st"> </span><span class="kw">sapply</span>(pool,<span class="dt">FUN=</span><span class="cf">function</span>(x){x<span class="op">$</span>biostate})</a>
+<a class="sourceLine" id="cb60-83" title="83">    distrib &lt;-<span class="st"> </span><span class="kw">table</span>(<span class="kw">factor</span>(states,<span class="dt">levels=</span><span class="dv">1</span><span class="op">:</span><span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb60-84" title="84">    disthistory[day,] &lt;-<span class="st"> </span>distrib</a>
+<a class="sourceLine" id="cb60-85" title="85">   <span class="cf">if</span>(plotNetwork)</a>
+<a class="sourceLine" id="cb60-86" title="86">   {</a>
+<a class="sourceLine" id="cb60-87" title="87">     <span class="kw">mygplot</span>(cc,socialnetwork,states,<span class="dt">main=</span><span class="kw">paste</span>(<span class="st">&quot;Day&quot;</span>,day))</a>
+<a class="sourceLine" id="cb60-88" title="88">   }</a>
+<a class="sourceLine" id="cb60-89" title="89">  </a>
+<a class="sourceLine" id="cb60-90" title="90">         </a>
+<a class="sourceLine" id="cb60-91" title="91">  }</a>
+<a class="sourceLine" id="cb60-92" title="92">  </a>
+<a class="sourceLine" id="cb60-93" title="93">  <span class="co">#barplot(t(disthistory),col=1:7)</span></a></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" title="1">disthist.df &lt;-<span class="kw">as.data.frame</span>(disthistory)</a>
+<a class="sourceLine" id="cb61-2" title="2"><span class="kw">colnames</span>(disthist.df) &lt;-<span class="st"> </span>STATENAMES</a>
+<a class="sourceLine" id="cb61-3" title="3">disthist.df<span class="op">$</span>day &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(disthistory)</a>
+<a class="sourceLine" id="cb61-4" title="4">histlong &lt;-<span class="st"> </span><span class="kw">melt</span>(disthist.df,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>)</a>
+<a class="sourceLine" id="cb61-5" title="5"></a>
+<a class="sourceLine" id="cb61-6" title="6"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">fill=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">position=</span><span class="st">&quot;stack&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb61-7" title="7"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-20-1.png" width="768" /></p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" title="1"><span class="co">##make the SIR plot:</span></a>
+<a class="sourceLine" id="cb62-2" title="2">sir &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">day=</span>disthist.df<span class="op">$</span>day,</a>
+<a class="sourceLine" id="cb62-3" title="3">                  <span class="dt">susceptible =</span> disthist.df<span class="op">$</span>Unexposed,</a>
+<a class="sourceLine" id="cb62-4" title="4">                  <span class="dt">infected =</span> disthist.df[,<span class="dv">2</span>]<span class="op">+</span>disthist.df[,<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb62-5" title="5">                  <span class="dt">recovered =</span> <span class="kw">rowSums</span>(disthist.df[,<span class="dv">4</span><span class="op">:</span><span class="dv">7</span>]))</a>
+<a class="sourceLine" id="cb62-6" title="6"></a>
+<a class="sourceLine" id="cb62-7" title="7">plot4 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">melt</span>(sir,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>),<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">group=</span>variable,<span class="dt">y=</span>value,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="dt">label=</span><span class="st">&quot;Network simulation with stay at home order from day 10 to 25&quot;</span>)</a>
+<a class="sourceLine" id="cb62-8" title="8"><span class="kw">print</span>(plot4)</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-20-2.png" width="768" /></p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" title="1"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">group=</span>variable,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-base/unnamed-chunk-20-3.png" width="768" /></p>
+<p>We can see that in this simulation, there were two spikes–one initial one and one that occurred after the stay-at-home order lifted.</p>
+</div>
+<div id="limations-of-the-model" class="section level2">
+<h2>Limations of the model</h2>
+<p>This model allows simulating agent behavior and response at a level not typically incorporated in many of the existing COVID-19 prediction models. It is not a full-fledged model however, and you should not use it for making predictions for your own situations. Whether you should trust the published epidemiological models out there is another issue. What this model permits is easy examination of some of the individual-level behaviors that might impact disease spread, and the impact different policies might have on the outcome.</p>
+</div>
+<div id="summary-and-other-simulations" class="section level2">
+<h2>Summary and other simulations</h2>
+<p>Feel free to play with the model and try your own simulations. It can help develop understandings of how different psychological, legal, policy, and social aspects can impact the spread of the COVID-19 disease.</p>
+<p>There are three student simulations we have developed that help do this, examining how the disease might be impacted by the different <a href="epidemic-demographics.html">demographic networks</a> (schools, workplace, families, etc.), the <a href="epidemic-michigan.html">geography of the state of Michigan</a>, and the possibility of <a href="epidemic-model-travellers.html">vacationers and travellers</a> bringing the disease into the population.</p>
+</div>
+</div>
+
+
+</div>
+
+
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

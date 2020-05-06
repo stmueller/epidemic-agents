@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Lamia Alam &amp; Shane Mueller" />
+
+
+<title>Modeling psychological impacts on epidemic spread: Demographic networks</title>
+
+<script src="support_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="support_files/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+<script src="support_files/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script src="support_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="support_files/navigation-1.1/tabsets.js"></script>
+<script src="support_files/navigation-1.1/codefolding.js"></script>
+<link href="support_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="support_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="support_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="support_files/readthedown-0.1/readthedown.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("text-table-of-contents");
+});
+</script>
+
+<!-- code folding -->
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+
+<div id="header">
+<h1 class="title">Modeling psychological impacts on epidemic spread: Demographic networks</h1>
+</div>
+
+
+<div id="sidebar">
+    <h2><a href="#content">Modeling psychological impacts on epidemic spread: Demographic networks</a></h2>
+    <div id="table-of-contents">
+      <ul>
+      <li><a href="#definitions">Definitions</a><ul>
+      <li><a href="#the-agent">The agent</a></li>
+      <li><a href="#timecourse-and-biological-model">Timecourse and Biological model</a></li>
+      <li><a href="#create-transition-matrix.">Create transition matrix.</a></li>
+      <li><a href="#social-model">Social model</a></li>
+      </ul></li>
+      </ul>
+    </div>
+    
+    <div id="postamble" data-toggle="wy-nav-shift" class="status">
+              <p class="author"><span class="glyphicon glyphicon-user"></span> Lamia Alam &amp; Shane Mueller</p>
+                </div>
+</div>
+
+<div id="main">
+<div id="definitions" class="section level1">
+<h1>Definitions</h1>
+<p>This model is based on the model/simulation found <a href="epidemic-model-base.html">found here</a>.</p>
+<p>We will try to incorporate opinion dynamics, network modeling, and a bit of the game theory to understand epidemic spread.</p>
+<div id="the-agent" class="section level2">
+<h2>The agent</h2>
+<p>We will use a simplified task network model to represent the biological progression of the disease. First, let’s suppose that an agent has two states: its psychological state and its biological state. psychological state might be ‘practicing distancing’, ‘believes conspiracy theory’, ‘in quarantine’, and we can explore these later. Let’s just consider everyone is in a generic ‘informed’ state [1].</p>
+<p>The biological state has a few specific cases:</p>
+<ol style="list-style-type: decimal">
+<li>Unexposed</li>
+<li>Asymptomatic but infected/contagious</li>
+<li>Symptomatic and contagious</li>
+<li>Symptomatic and not contagious</li>
+<li>Post-COVID Immune</li>
+<li>Naturally immune (will not contract)</li>
+<li>Death</li>
+</ol>
+<p>We could identify several others, but this might be fine. So, we can define the agent according to just two numbers. We might assume that initially, most people are in bio-state 1, but some would be in state 6 already, which is essentially the same as state 5.</p>
+<p>We will just define these as a named list.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(dplyr)</a></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">library</span>(sna)</a></code></pre></div>
+<pre><code>## Loading required package: statnet.common</code></pre>
+<pre><code>## 
+## Attaching package: &#39;statnet.common&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     order</code></pre>
+<pre><code>## Loading required package: network</code></pre>
+<pre><code>## network: Classes for Relational Data
+## Version 1.16.0 created on 2019-11-30.
+## copyright (c) 2005, Carter T. Butts, University of California-Irvine
+##                     Mark S. Handcock, University of California -- Los Angeles
+##                     David R. Hunter, Penn State University
+##                     Martina Morris, University of Washington
+##                     Skye Bender-deMoll, University of Washington
+##  For citation information, type citation(&quot;network&quot;).
+##  Type help(&quot;network-package&quot;) to get started.</code></pre>
+<pre><code>## sna: Tools for Social Network Analysis
+## Version 2.5 created on 2019-12-09.
+## copyright (c) 2005, Carter T. Butts, University of California-Irvine
+##  For citation information, type citation(&quot;sna&quot;).
+##  Type help(package=&quot;sna&quot;) to get started.</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">library</span>(knitr)</a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="kw">library</span>(reshape2)</a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="kw">library</span>(igraph)</a></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;igraph&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:sna&#39;:
+## 
+##     betweenness, bonpow, closeness, components, degree, dyad.census,
+##     evcent, hierarchy, is.connected, neighborhood, triad.census</code></pre>
+<pre><code>## The following objects are masked from &#39;package:network&#39;:
+## 
+##     %c%, %s%, add.edges, add.vertices, delete.edges, delete.vertices,
+##     get.edge.attribute, get.edges, get.vertex.attribute, is.bipartite,
+##     is.directed, list.edge.attributes, list.vertex.attributes,
+##     set.edge.attribute, set.vertex.attribute</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     as_data_frame, groups, union</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     decompose, spectrum</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     union</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="co">#library(animation)</span></a>
+<a class="sourceLine" id="cb19-2" title="2">STATES &lt;&lt;-<span class="st"> </span><span class="dv">7</span></a>
+<a class="sourceLine" id="cb19-3" title="3"></a>
+<a class="sourceLine" id="cb19-4" title="4">STATENAMES &lt;&lt;-<span class="st">  </span><span class="kw">c</span>(<span class="st">&quot;Unexposed&quot;</span>,</a>
+<a class="sourceLine" id="cb19-5" title="5">                  <span class="st">&quot;Asymptomatic &amp; contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="st">&quot;Symptomatic and contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="st">&quot;Symptomatic and not contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-8" title="8"><span class="st">&quot;Post-COVID immune&quot;</span>,</a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="st">&quot;Naturally immune&quot;</span>,</a>
+<a class="sourceLine" id="cb19-10" title="10"><span class="st">&quot;Death&quot;</span>)</a>
+<a class="sourceLine" id="cb19-11" title="11"></a>
+<a class="sourceLine" id="cb19-12" title="12"></a>
+<a class="sourceLine" id="cb19-13" title="13">STATELABELS &lt;&lt;-<span class="st">  </span><span class="kw">c</span>(<span class="st">&quot;Unexposed&quot;</span>,<span class="st">&quot;Asymptomatic</span><span class="ch">\n</span><span class="st"> &amp; contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-14" title="14"><span class="st">&quot;Symptomatic </span><span class="ch">\n</span><span class="st">&amp; contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-15" title="15"><span class="st">&quot;Symptomatic </span><span class="ch">\n</span><span class="st">&amp; not contagious&quot;</span>,</a>
+<a class="sourceLine" id="cb19-16" title="16"><span class="st">&quot;Post-COVID immune&quot;</span>,</a>
+<a class="sourceLine" id="cb19-17" title="17"><span class="st">&quot;Naturally immune&quot;</span>,</a>
+<a class="sourceLine" id="cb19-18" title="18"><span class="st">&quot;Death&quot;</span>)</a>
+<a class="sourceLine" id="cb19-19" title="19"></a>
+<a class="sourceLine" id="cb19-20" title="20"></a>
+<a class="sourceLine" id="cb19-21" title="21">makeAgent &lt;-<span class="st"> </span><span class="cf">function</span>(psych,bio)</a>
+<a class="sourceLine" id="cb19-22" title="22">{</a>
+<a class="sourceLine" id="cb19-23" title="23">  <span class="kw">return</span> (<span class="kw">list</span>(<span class="dt">psychstate=</span>psych,<span class="dt">biostate=</span>bio))</a>
+<a class="sourceLine" id="cb19-24" title="24">}</a>
+<a class="sourceLine" id="cb19-25" title="25"><span class="kw">print</span>(<span class="kw">makeAgent</span>(<span class="dv">1</span>,<span class="dv">2</span>))</a></code></pre></div>
+<pre><code>## $psychstate
+## [1] 1
+## 
+## $biostate
+## [1] 2</code></pre>
+</div>
+<div id="timecourse-and-biological-model" class="section level2">
+<h2>Timecourse and Biological model</h2>
+<p>We need a way to transition the biological state in a reasonable way, much like a task network model that keeps track of time of sub-events. This should consider ONLY the natural progression of the disease. We will model timecourse on a timecourse of 1-day units.</p>
+<p>An easy way to do this is with ballistic events. That is, we can keep track of the next transition point for any state, if it is programmed at the beginning. This is similar to how I implemented this in the task network model, but a bit simpler because we only have to worry about changes each day.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">makeAgent &lt;-<span class="st"> </span><span class="cf">function</span>(psychstate,biostate,<span class="dt">age=</span><span class="dv">30</span>)</a>
+<a class="sourceLine" id="cb21-2" title="2">{</a>
+<a class="sourceLine" id="cb21-3" title="3">  </a>
+<a class="sourceLine" id="cb21-4" title="4">  <span class="kw">return</span> (<span class="kw">list</span>(<span class="dt">psychstate=</span>psychstate,</a>
+<a class="sourceLine" id="cb21-5" title="5">               <span class="dt">biostate=</span>biostate,</a>
+<a class="sourceLine" id="cb21-6" title="6">               <span class="dt">age=</span>age,</a>
+<a class="sourceLine" id="cb21-7" title="7">               <span class="dt">nextbiostate=</span><span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb21-8" title="8">               <span class="dt">biostatecountdown=</span><span class="ot">NA</span>))</a>
+<a class="sourceLine" id="cb21-9" title="9">}</a></code></pre></div>
+</div>
+<div id="create-transition-matrix." class="section level2">
+<h2>Create transition matrix.</h2>
+<p>If on each timestep we could move between states probabilistically, this would be a markov process. We could represent this by a simple transition network. If we represented the possible transitions in a network, that would simplify the logic above. But we need more like a task network because the time taken to transition matters. To keep it simple, Let’s make all timing distributions uniform with a min and max parameter for time in each state. We can program two pathways through the stages, with a couple branch points (death vs recovery; the possibility of recovering after acquiring with no symptoms). The progression of the disease is completely specified by the data, and a generic update function will automatically progress the agent each day.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="co"># * 1. Unexposed</span></a>
+<a class="sourceLine" id="cb22-2" title="2"><span class="co"># * 2. Asymptomatic but infected/contagious</span></a>
+<a class="sourceLine" id="cb22-3" title="3"><span class="co"># * 3. Symptomatic and contagious</span></a>
+<a class="sourceLine" id="cb22-4" title="4"><span class="co"># * 4. Symptomatic and not contagious</span></a>
+<a class="sourceLine" id="cb22-5" title="5"><span class="co"># * 5. Post-COVID Immune</span></a>
+<a class="sourceLine" id="cb22-6" title="6"><span class="co"># * 6. Naturally immune (will not contract)</span></a>
+<a class="sourceLine" id="cb22-7" title="7"><span class="co"># * 7. Death</span></a>
+<a class="sourceLine" id="cb22-8" title="8"></a>
+<a class="sourceLine" id="cb22-9" title="9"></a>
+<a class="sourceLine" id="cb22-10" title="10">bioTransition &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,STATES,STATES)</a>
+<a class="sourceLine" id="cb22-11" title="11">bioMin &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,STATES)      <span class="co">#state time minimum</span></a>
+<a class="sourceLine" id="cb22-12" title="12">bioMax &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,STATES)      <span class="co">#state time maximum</span></a>
+<a class="sourceLine" id="cb22-13" title="13"></a>
+<a class="sourceLine" id="cb22-14" title="14"></a>
+<a class="sourceLine" id="cb22-15" title="15"></a>
+<a class="sourceLine" id="cb22-16" title="16">bioMin[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">3</span>            <span class="co">#infected but asymptomatic for 3 to 10 days</span></a>
+<a class="sourceLine" id="cb22-17" title="17">bioMax[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">15</span>          </a>
+<a class="sourceLine" id="cb22-18" title="18">bioTransition[<span class="dv">2</span>,<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="fl">.15</span>  <span class="co">#transition to infected with symptoms</span></a>
+<a class="sourceLine" id="cb22-19" title="19">bioTransition[<span class="dv">2</span>,<span class="dv">5</span>] &lt;-<span class="st"> </span><span class="fl">.85</span>  <span class="co">#transition to no longer contagious/cured</span></a>
+<a class="sourceLine" id="cb22-20" title="20"></a>
+<a class="sourceLine" id="cb22-21" title="21"></a>
+<a class="sourceLine" id="cb22-22" title="22">bioMin[<span class="dv">3</span>] &lt;-<span class="st">    </span><span class="dv">3</span>             <span class="co">#symptoms + contagion</span></a>
+<a class="sourceLine" id="cb22-23" title="23">bioMax[<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="dv">8</span>                <span class="co">#symptoms + contagion max</span></a>
+<a class="sourceLine" id="cb22-24" title="24">bioTransition[<span class="dv">3</span>,<span class="dv">4</span>] &lt;-<span class="st">  </span><span class="fl">.95</span>    <span class="co">#transitioon to no longer contagious</span></a>
+<a class="sourceLine" id="cb22-25" title="25">bioTransition[<span class="dv">3</span>,<span class="dv">7</span>] &lt;-<span class="st">  </span><span class="fl">.05</span>    <span class="co">#transitioon to death state </span></a>
+<a class="sourceLine" id="cb22-26" title="26"></a>
+<a class="sourceLine" id="cb22-27" title="27"></a>
+<a class="sourceLine" id="cb22-28" title="28">bioMin[<span class="dv">4</span>] &lt;-<span class="st"> </span><span class="dv">1</span>          <span class="co">#symptoms bot no longer contagiious</span></a>
+<a class="sourceLine" id="cb22-29" title="29">bioMax[<span class="dv">4</span>] &lt;-<span class="st"> </span><span class="dv">7</span></a>
+<a class="sourceLine" id="cb22-30" title="30">bioTransition[<span class="dv">4</span>,<span class="dv">5</span>] &lt;-<span class="st"> </span><span class="dv">1</span>  <span class="co">#Transition to &#39;immune&#39; cured state.</span></a>
+<a class="sourceLine" id="cb22-31" title="31"></a>
+<a class="sourceLine" id="cb22-32" title="32"></a>
+<a class="sourceLine" id="cb22-33" title="33"></a>
+<a class="sourceLine" id="cb22-34" title="34"></a>
+<a class="sourceLine" id="cb22-35" title="35">setAgentState&lt;-<span class="st"> </span><span class="cf">function</span>(agent, biostate)</a>
+<a class="sourceLine" id="cb22-36" title="36">{</a>
+<a class="sourceLine" id="cb22-37" title="37">  agent<span class="op">$</span>biostate &lt;-<span class="st"> </span>biostate</a>
+<a class="sourceLine" id="cb22-38" title="38">  <span class="cf">if</span>(<span class="kw">sum</span>(bioTransition[biostate,])<span class="op">&gt;</span><span class="dv">0</span>) <span class="co"># this state transitions to something else.</span></a>
+<a class="sourceLine" id="cb22-39" title="39">  {</a>
+<a class="sourceLine" id="cb22-40" title="40">    <span class="co">##which state do we go to?</span></a>
+<a class="sourceLine" id="cb22-41" title="41">     agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dt">x=</span><span class="kw">seq</span>(bioMin[biostate],bioMax[biostate]),<span class="dv">1</span>) <span class="co">#how long will we state in this state?</span></a>
+<a class="sourceLine" id="cb22-42" title="42">     agent<span class="op">$</span>nextbiostate &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>STATES, <span class="dt">prob=</span>bioTransition[agent<span class="op">$</span>biostate,],<span class="dt">size=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb22-43" title="43">     </a>
+<a class="sourceLine" id="cb22-44" title="44">  } <span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb22-45" title="45">   agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb22-46" title="46">   agent<span class="op">$</span>nextbiostate &lt;-<span class="st"> </span><span class="ot">NA</span>   <span class="co">##just so we can tell if the agent is finished.</span></a>
+<a class="sourceLine" id="cb22-47" title="47">  }</a>
+<a class="sourceLine" id="cb22-48" title="48">  <span class="kw">return</span>(agent) </a>
+<a class="sourceLine" id="cb22-49" title="49">}</a>
+<a class="sourceLine" id="cb22-50" title="50"></a>
+<a class="sourceLine" id="cb22-51" title="51">transitionAgent&lt;-<span class="st"> </span><span class="cf">function</span>(agent)</a>
+<a class="sourceLine" id="cb22-52" title="52">{</a>
+<a class="sourceLine" id="cb22-53" title="53">   <span class="kw">return</span>(<span class="kw">setAgentState</span>(agent,agent<span class="op">$</span>nextbiostate))</a>
+<a class="sourceLine" id="cb22-54" title="54">}</a>
+<a class="sourceLine" id="cb22-55" title="55"></a>
+<a class="sourceLine" id="cb22-56" title="56">updateAgent&lt;-<span class="st"> </span><span class="cf">function</span>(agent)</a>
+<a class="sourceLine" id="cb22-57" title="57">{</a>
+<a class="sourceLine" id="cb22-58" title="58">  <span class="cf">if</span>(<span class="op">!</span><span class="kw">is.na</span>(agent<span class="op">$</span>biostatecountdown))</a>
+<a class="sourceLine" id="cb22-59" title="59">  {</a>
+<a class="sourceLine" id="cb22-60" title="60">   agent<span class="op">$</span>biostatecountdown &lt;-<span class="st"> </span>agent<span class="op">$</span>biostatecountdown <span class="dv">-1</span></a>
+<a class="sourceLine" id="cb22-61" title="61">    <span class="cf">if</span>(agent<span class="op">$</span>biostatecountdown <span class="op">&lt;=</span><span class="dv">0</span>)  <span class="co">##new state</span></a>
+<a class="sourceLine" id="cb22-62" title="62">    {</a>
+<a class="sourceLine" id="cb22-63" title="63">       agent &lt;-<span class="st"> </span><span class="kw">transitionAgent</span>(agent)</a>
+<a class="sourceLine" id="cb22-64" title="64"></a>
+<a class="sourceLine" id="cb22-65" title="65">    }</a>
+<a class="sourceLine" id="cb22-66" title="66">  }</a>
+<a class="sourceLine" id="cb22-67" title="67">   <span class="kw">return</span>(agent)</a>
+<a class="sourceLine" id="cb22-68" title="68">}</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">par</span>(<span class="dt">xpd=</span><span class="ot">NA</span>,<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">8</span>,<span class="dv">5</span>))</a>
+<a class="sourceLine" id="cb23-2" title="2"><span class="kw">gplot</span>(bioTransition,<span class="dt">label=</span>STATELABELS)</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-4-1.png" width="768" /></p>
+<p>If we start an agent in an unexposed state, nothing happens. Agent’s do not just naturally develop the disease. We can just update the agent until there is no next-state programmed.</p>
+</div>
+<div id="social-model" class="section level2">
+<h2>Social model</h2>
+<p>This is not quite right, because we’d really expect interactions to be clumpy–you interact with the same people every day, but this model is like the opinion dynamics model in that anyone can interact with anyone. Let’s make a network using preferential attachment to represent that social world. We can make a couple of them and add them together to represent how we each have different types of relationships and interactions–you may be the president of your drama club and so are a central member, but you are also in a pottery class where you don’t talk to very many people (although your teacher does).</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">makeNetwork&lt;-<span class="st"> </span><span class="cf">function</span>(numAgents,<span class="dt">numsets=</span><span class="dv">3</span>,<span class="dt">steps=</span><span class="dv">1</span>,<span class="dt">power=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb24-2" title="2">{</a>
+<a class="sourceLine" id="cb24-3" title="3">  ord &lt;-<span class="st"> </span><span class="kw">sample</span>(numAgents)</a>
+<a class="sourceLine" id="cb24-4" title="4">  tmp&lt;-<span class="kw">as_adjacency_matrix</span>(<span class="kw">sample_pa</span>(numAgents,<span class="dt">power=</span>power),<span class="dt">sparse=</span>F)</a>
+<a class="sourceLine" id="cb24-5" title="5">  tmp &lt;-<span class="st"> </span>tmp <span class="op">+</span><span class="st"> </span><span class="kw">t</span>(tmp)</a>
+<a class="sourceLine" id="cb24-6" title="6">  tmp &lt;-<span class="st"> </span>tmp[ord,ord]</a>
+<a class="sourceLine" id="cb24-7" title="7">  <span class="cf">if</span>(numsets<span class="op">&gt;</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb24-8" title="8">  {</a>
+<a class="sourceLine" id="cb24-9" title="9">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span>numsets)</a>
+<a class="sourceLine" id="cb24-10" title="10">  {</a>
+<a class="sourceLine" id="cb24-11" title="11">    ord &lt;-<span class="st"> </span><span class="kw">sample</span>(numAgents)</a>
+<a class="sourceLine" id="cb24-12" title="12">    sn2 &lt;-<span class="kw">as_adjacency_matrix</span>(<span class="kw">sample_pa</span>(numAgents,<span class="dt">power=</span>power),<span class="dt">sparse=</span>F)[ord,ord]</a>
+<a class="sourceLine" id="cb24-13" title="13">    tmp &lt;-<span class="st"> </span>tmp <span class="op">+</span><span class="st"> </span>sn2 <span class="op">+</span><span class="st"> </span><span class="kw">t</span>(sn2)</a>
+<a class="sourceLine" id="cb24-14" title="14">    </a>
+<a class="sourceLine" id="cb24-15" title="15">   }</a>
+<a class="sourceLine" id="cb24-16" title="16">  }</a>
+<a class="sourceLine" id="cb24-17" title="17">  <span class="cf">if</span>(steps<span class="op">&gt;</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb24-18" title="18">  {</a>
+<a class="sourceLine" id="cb24-19" title="19">   <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span>steps)</a>
+<a class="sourceLine" id="cb24-20" title="20">   {</a>
+<a class="sourceLine" id="cb24-21" title="21">      tmp &lt;-<span class="st"> </span>tmp <span class="op">+</span><span class="st"> </span>tmp <span class="op">%*%</span><span class="st"> </span>tmp  <span class="co">## iterate to neighbors</span></a>
+<a class="sourceLine" id="cb24-22" title="22">   }</a>
+<a class="sourceLine" id="cb24-23" title="23">  }</a>
+<a class="sourceLine" id="cb24-24" title="24">  (tmp<span class="op">&gt;</span><span class="dv">0</span>)<span class="op">+</span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb24-25" title="25">}</a>
+<a class="sourceLine" id="cb24-26" title="26"></a>
+<a class="sourceLine" id="cb24-27" title="27"><span class="co">## This tries to make a network with families, schools, workplaces..</span></a>
+<a class="sourceLine" id="cb24-28" title="28"><span class="co">## </span></a>
+<a class="sourceLine" id="cb24-29" title="29">makeDemographicNetwork &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">numAgents=</span><span class="dv">1000</span>, </a>
+<a class="sourceLine" id="cb24-30" title="30">                                   <span class="dt">householdsize=</span><span class="fl">2.5</span>,</a>
+<a class="sourceLine" id="cb24-31" title="31">                                   <span class="dt">numSchools=</span><span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb24-32" title="32">                                   <span class="dt">numWorkplaces=</span><span class="dv">25</span>,</a>
+<a class="sourceLine" id="cb24-33" title="33">                                   <span class="dt">agePyramid =</span> <span class="kw">c</span>(<span class="dv">20</span>,<span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">12</span>,<span class="dv">14</span>,<span class="dv">13</span>,<span class="dv">12</span>,<span class="dv">11</span>))</a>
+<a class="sourceLine" id="cb24-34" title="34">  </a>
+<a class="sourceLine" id="cb24-35" title="35">{</a>
+<a class="sourceLine" id="cb24-36" title="36">  </a>
+<a class="sourceLine" id="cb24-37" title="37">  numChildren &lt;-<span class="st"> </span><span class="kw">floor</span>(<span class="kw">sum</span>(agePyramid[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>])<span class="op">/</span><span class="kw">sum</span>(agePyramid) <span class="op">*</span><span class="st"> </span>numAgents)</a>
+<a class="sourceLine" id="cb24-38" title="38">  numAdults &lt;-<span class="st"> </span>numAgents<span class="op">-</span>numChildren</a>
+<a class="sourceLine" id="cb24-39" title="39"></a>
+<a class="sourceLine" id="cb24-40" title="40">  <span class="co">##Adult ages age:</span></a>
+<a class="sourceLine" id="cb24-41" title="41">  </a>
+<a class="sourceLine" id="cb24-42" title="42">  adultAge&lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">8</span>)<span class="op">*</span><span class="dv">10-5</span>,<span class="dt">size=</span>numAdults,<span class="dt">replace=</span>T,<span class="dt">prob=</span>agePyramid[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)])</a>
+<a class="sourceLine" id="cb24-43" title="43">  childrenAge &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">15</span>),<span class="dt">size=</span>numChildren,<span class="dt">replace=</span>T,<span class="dt">prob=</span>agePyramid[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>])</a>
+<a class="sourceLine" id="cb24-44" title="44">  ages &lt;-<span class="st"> </span><span class="kw">c</span>(adultAge,childrenAge)</a>
+<a class="sourceLine" id="cb24-45" title="45">  <span class="co">##Each household</span></a>
+<a class="sourceLine" id="cb24-46" title="46">  numHouseholds &lt;-<span class="kw">floor</span>( numAgents<span class="op">/</span>householdsize)</a>
+<a class="sourceLine" id="cb24-47" title="47">  householdXY &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">runif</span>(numHouseholds<span class="op">*</span><span class="dv">2</span>)<span class="op">*</span><span class="dv">10</span>,<span class="dt">ncol=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb24-48" title="48">  </a>
+<a class="sourceLine" id="cb24-49" title="49">  <span class="co">#Now, let&#39;s assign people to households.  Adults can be assigned to anywhere;</span></a>
+<a class="sourceLine" id="cb24-50" title="50">  <span class="co">##children need to be assigned to a household that already exists.</span></a>
+<a class="sourceLine" id="cb24-51" title="51">  </a>
+<a class="sourceLine" id="cb24-52" title="52">  <span class="co">##assign &#39;head-of-household&#39; ##first the adults, then the children</span></a>
+<a class="sourceLine" id="cb24-53" title="53">  myHousehold &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>,numAgents)</a>
+<a class="sourceLine" id="cb24-54" title="54">  myHousehold[<span class="dv">1</span><span class="op">:</span>numHouseholds] &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span>numHouseholds</a>
+<a class="sourceLine" id="cb24-55" title="55">  myHousehold[(numHouseholds<span class="op">+</span><span class="dv">1</span>)<span class="op">:</span>numAgents] &lt;-<span class="st">  </span><span class="kw">sample</span>(numHouseholds,<span class="dt">replace=</span>T,</a>
+<a class="sourceLine" id="cb24-56" title="56">                                                     <span class="dt">size=</span>numAgents<span class="op">-</span>numHouseholds)</a>
+<a class="sourceLine" id="cb24-57" title="57">  </a>
+<a class="sourceLine" id="cb24-58" title="58">  </a>
+<a class="sourceLine" id="cb24-59" title="59">  <span class="co">##now, all households are assigned.  Let&#39;s assign workplaces and schools.  </span></a>
+<a class="sourceLine" id="cb24-60" title="60">  <span class="co">##for simplicity, every adult has a workplace, and every child has a school, even though children</span></a>
+<a class="sourceLine" id="cb24-61" title="61">  <span class="co">## or adults may work from home/too young for school, or be retired,</span></a>
+<a class="sourceLine" id="cb24-62" title="62">  <span class="co">##wokplaces 1 is hosptial</span></a>
+<a class="sourceLine" id="cb24-63" title="63">  <span class="co">## workplace 1+1;numschools are considered schools</span></a>
+<a class="sourceLine" id="cb24-64" title="64">   </a>
+<a class="sourceLine" id="cb24-65" title="65">  <span class="co">##Workplace size is roughly zipfs-law</span></a>
+<a class="sourceLine" id="cb24-66" title="66">  workPlaces &lt;-<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>numWorkplaces,<span class="dt">size=</span>numAdults,<span class="dt">prob=</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span><span class="dv">1</span><span class="op">:</span>numWorkplaces),<span class="dt">replace=</span>T)</a>
+<a class="sourceLine" id="cb24-67" title="67">  schoolPlaces &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">+</span>(<span class="dv">1</span><span class="op">:</span>numSchools),<span class="dt">size=</span>numChildren,<span class="dt">replace=</span>T)</a>
+<a class="sourceLine" id="cb24-68" title="68">  work &lt;-<span class="st"> </span><span class="kw">c</span>(workPlaces,<span class="kw">rep</span>(<span class="dv">0</span>,numChildren))</a>
+<a class="sourceLine" id="cb24-69" title="69">  school &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">0</span>,numAdults),schoolPlaces)</a>
+<a class="sourceLine" id="cb24-70" title="70">  pool &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb24-71" title="71">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb24-72" title="72">   {</a>
+<a class="sourceLine" id="cb24-73" title="73">   tmpAgent &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb24-74" title="74">                          <span class="dt">biostate=</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb24-75" title="75">                          <span class="dt">age=</span>ages[i])</a>
+<a class="sourceLine" id="cb24-76" title="76"></a>
+<a class="sourceLine" id="cb24-77" title="77">    tmpAgent<span class="op">$</span>household =<span class="st"> </span>myHousehold[i]</a>
+<a class="sourceLine" id="cb24-78" title="78">    tmpAgent<span class="op">$</span>work =<span class="st"> </span>work[i]  <span class="co">##work or school</span></a>
+<a class="sourceLine" id="cb24-79" title="79">    tmpAgent<span class="op">$</span>school=school[i]</a>
+<a class="sourceLine" id="cb24-80" title="80">    tmpAgent<span class="op">$</span>head &lt;-<span class="st"> </span>(i<span class="op">&lt;</span>numHouseholds)</a>
+<a class="sourceLine" id="cb24-81" title="81">    tmpAgent<span class="op">$</span>xy &lt;-<span class="st"> </span>householdXY[myHousehold[i] ]</a>
+<a class="sourceLine" id="cb24-82" title="82">    pool[[i]] &lt;-tmpAgent</a>
+<a class="sourceLine" id="cb24-83" title="83">   }</a>
+<a class="sourceLine" id="cb24-84" title="84"> </a>
+<a class="sourceLine" id="cb24-85" title="85">  </a>
+<a class="sourceLine" id="cb24-86" title="86">  <span class="co">##now, let&#39;s lay out the social network</span></a>
+<a class="sourceLine" id="cb24-87" title="87">  schoolmat &lt;-<span class="st"> </span>(<span class="kw">outer</span>(school,school,<span class="st">&quot;==&quot;</span>) <span class="op">*</span><span class="st"> </span><span class="kw">outer</span>(school,school,<span class="st">&quot;*&quot;</span>))<span class="op">&gt;</span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb24-88" title="88">  workmat &lt;-<span class="st"> </span>(<span class="kw">outer</span>(work,work,<span class="st">&quot;==&quot;</span>) <span class="op">*</span><span class="st"> </span><span class="kw">outer</span>(work,work,<span class="st">&quot;*&quot;</span>))<span class="op">&gt;</span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb24-89" title="89">  housemat &lt;-<span class="st"> </span>( <span class="kw">outer</span>(myHousehold,myHousehold,<span class="st">&quot;==&quot;</span>))<span class="op">&gt;</span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb24-90" title="90">  agentXY &lt;-<span class="st"> </span>householdXY[myHousehold,] <span class="op">+</span><span class="st">  </span><span class="kw">matrix</span>(.<span class="dv">15</span><span class="op">*</span><span class="st"> </span><span class="kw">rnorm</span>(<span class="kw">length</span>(myHousehold)<span class="op">*</span><span class="dv">2</span>),<span class="dt">ncol=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb24-91" title="91">  neighborhood &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">dist</span>(agentXY)) <span class="op">&lt;</span><span class="st"> </span><span class="kw">runif</span>(<span class="kw">nrow</span>(agentXY)<span class="op">^</span><span class="dv">2</span>)<span class="op">*</span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb24-92" title="92"><span class="co">#  neighborhood &lt;- outer(agentXY,agentXY, function(a,b){(a-b)^2 &lt; runif(1)*.5})</span></a>
+<a class="sourceLine" id="cb24-93" title="93">  network &lt;-<span class="st"> </span>schoolmat<span class="op">+</span><span class="st"> </span>workmat <span class="op">+</span><span class="st"> </span>housemat <span class="op">+</span><span class="st"> </span>neighborhood</a>
+<a class="sourceLine" id="cb24-94" title="94">   <span class="kw">return</span> (<span class="kw">list</span>(<span class="dt">xy=</span>agentXY, <span class="dt">pool=</span>pool,<span class="dt">network=</span>network,</a>
+<a class="sourceLine" id="cb24-95" title="95">                <span class="dt">neighborhood=</span>neighborhood,</a>
+<a class="sourceLine" id="cb24-96" title="96">                <span class="dt">worknet=</span>workmat,</a>
+<a class="sourceLine" id="cb24-97" title="97">                <span class="dt">schoolnet=</span>schoolmat,</a>
+<a class="sourceLine" id="cb24-98" title="98">                <span class="dt">housenet=</span>housemat))</a>
+<a class="sourceLine" id="cb24-99" title="99">}</a>
+<a class="sourceLine" id="cb24-100" title="100"></a>
+<a class="sourceLine" id="cb24-101" title="101"></a>
+<a class="sourceLine" id="cb24-102" title="102"></a>
+<a class="sourceLine" id="cb24-103" title="103"></a>
+<a class="sourceLine" id="cb24-104" title="104">mygplot &lt;-<span class="st"> </span><span class="cf">function</span>(coord, network,states,<span class="dt">main=</span><span class="st">&quot;&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;grey40&quot;</span>,<span class="dt">add=</span>F)</a>
+<a class="sourceLine" id="cb24-105" title="105">{</a>
+<a class="sourceLine" id="cb24-106" title="106">  <span class="cf">if</span>(<span class="kw">is.null</span>(coord))</a>
+<a class="sourceLine" id="cb24-107" title="107">  {</a>
+<a class="sourceLine" id="cb24-108" title="108">    coord  &lt;-<span class="st"> </span><span class="kw">gplot.layout.fruchtermanreingold</span>(network,<span class="dt">layout.par=</span><span class="kw">list</span>(<span class="dt">niter=</span><span class="dv">500</span>))</a>
+<a class="sourceLine" id="cb24-109" title="109">  }</a>
+<a class="sourceLine" id="cb24-110" title="110">  </a>
+<a class="sourceLine" id="cb24-111" title="111">  newmin &lt;-<span class="st"> </span><span class="kw">mean</span>(coord[,<span class="dv">2</span>]) <span class="op">-</span><span class="st"> </span>(<span class="op">-</span><span class="kw">min</span>(coord[,<span class="dv">2</span>]) <span class="op">+</span><span class="st"> </span><span class="kw">mean</span>(coord[,<span class="dv">2</span>])) <span class="op">*</span><span class="st"> </span><span class="fl">1.4</span></a>
+<a class="sourceLine" id="cb24-112" title="112">   palette=<span class="kw">c</span>(<span class="st">&quot;white&quot;</span>,<span class="st">&quot;yellow&quot;</span>,<span class="st">&quot;red&quot;</span>,<span class="st">&quot;green&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>,<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;black&quot;</span>)</a>
+<a class="sourceLine" id="cb24-113" title="113">   <span class="cf">if</span>(add<span class="op">==</span>F)</a>
+<a class="sourceLine" id="cb24-114" title="114">     <span class="kw">plot</span>(coord,<span class="dt">col=</span><span class="st">&quot;black&quot;</span>,<span class="dt">bty=</span><span class="st">&quot;n&quot;</span>,<span class="dt">pch=</span><span class="dv">16</span>,<span class="dt">cex=</span><span class="fl">2.7</span>,<span class="dt">xaxt=</span><span class="st">&quot;n&quot;</span>,<span class="dt">yaxt=</span><span class="st">&quot;n&quot;</span>,<span class="dt">main=</span>main,</a>
+<a class="sourceLine" id="cb24-115" title="115">        <span class="dt">xlab=</span><span class="st">&quot;&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;&quot;</span>,<span class="dt">axes=</span>F,</a>
+<a class="sourceLine" id="cb24-116" title="116">        <span class="dt">ylim=</span><span class="kw">c</span>(newmin,<span class="kw">max</span>(coord[,<span class="dv">2</span>])),<span class="dt">type=</span><span class="st">&quot;n&quot;</span>)</a>
+<a class="sourceLine" id="cb24-117" title="117">   </a>
+<a class="sourceLine" id="cb24-118" title="118">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(network))</a>
+<a class="sourceLine" id="cb24-119" title="119">  {</a>
+<a class="sourceLine" id="cb24-120" title="120">    <span class="cf">if</span>(<span class="kw">sum</span>(network[i,])<span class="op">&gt;</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb24-121" title="121">    {</a>
+<a class="sourceLine" id="cb24-122" title="122">     <span class="kw">segments</span>(coord[i,<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb24-123" title="123">            coord[i,<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb24-124" title="124">            coord[network[i,]<span class="op">&gt;</span><span class="dv">0</span>,<span class="dv">1</span>,<span class="dt">drop=</span>F],</a>
+<a class="sourceLine" id="cb24-125" title="125">            coord[network[i,]<span class="op">&gt;</span><span class="dv">0</span>,<span class="dv">2</span>,<span class="dt">drop=</span>F],<span class="dt">col=</span>edgecol)</a>
+<a class="sourceLine" id="cb24-126" title="126">    }</a>
+<a class="sourceLine" id="cb24-127" title="127">   }</a>
+<a class="sourceLine" id="cb24-128" title="128">       <span class="kw">points</span>(coord,<span class="dt">pch=</span><span class="dv">16</span>,<span class="dt">cex=</span><span class="fl">2.3</span>,<span class="dt">col=</span> palette[states])</a>
+<a class="sourceLine" id="cb24-129" title="129">              </a>
+<a class="sourceLine" id="cb24-130" title="130">       <span class="kw">points</span>(coord,<span class="dt">pch=</span><span class="dv">1</span>,<span class="dt">cex=</span><span class="fl">2.3</span>,<span class="dt">col=</span><span class="st">&quot;black&quot;</span>)</a>
+<a class="sourceLine" id="cb24-131" title="131">      <span class="kw">legend</span>(<span class="kw">mean</span>(coord[,<span class="dv">1</span>]),<span class="kw">min</span>(coord[,<span class="dv">2</span>]),<span class="dt">bty=</span><span class="st">&#39;n&#39;</span>,<span class="dt">y.intersp=</span>.<span class="dv">7</span>,<span class="dt">cex=</span>.<span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb24-132" title="132">              STATENAMES, <span class="dt">pch=</span><span class="dv">16</span>,<span class="dt">col=</span>palette)</a>
+<a class="sourceLine" id="cb24-133" title="133">              </a>
+<a class="sourceLine" id="cb24-134" title="134">      <span class="kw">return</span> (coord)</a>
+<a class="sourceLine" id="cb24-135" title="135">}</a>
+<a class="sourceLine" id="cb24-136" title="136"></a>
+<a class="sourceLine" id="cb24-137" title="137">net &lt;-<span class="st"> </span><span class="kw">makeDemographicNetwork</span>(<span class="dv">500</span>, <span class="dt">numSchools=</span><span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb24-138" title="138">                                   <span class="dt">numWorkplaces=</span><span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb24-139" title="139"></a>
+<a class="sourceLine" id="cb24-140" title="140">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>housenet,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),<span class="dt">main=</span><span class="st">&quot;Households&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;blue&quot;</span>)</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-5-1.png" width="1920" /></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>schoolnet<span class="op">+</span><span class="dv">0</span>,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),<span class="dt">main=</span><span class="st">&quot;Schools&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;orange&quot;</span>)</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-5-2.png" width="1920" /></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>worknet<span class="op">+</span><span class="dv">0</span>,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),<span class="dt">main=</span><span class="st">&quot;Workplaces&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;darkgreen&quot;</span>)</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-5-3.png" width="1920" /></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>neighborhood,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),</a>
+<a class="sourceLine" id="cb27-2" title="2">                                    <span class="dt">main=</span><span class="st">&quot;Neighborhood network&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;brown&quot;</span>)</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-5-4.png" width="1920" /></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>network,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),<span class="dt">main=</span><span class="st">&quot;Combined network&quot;</span>)</a>
+<a class="sourceLine" id="cb28-2" title="2">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>housenet,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),<span class="dt">main=</span><span class="st">&quot;Household network&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;blue&quot;</span>,<span class="dt">add=</span>T)</a>
+
+<img src="support_files/figure-html-demo/network.gif" />
+
+<a class="sourceLine" id="cb28-3" title="3">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>schoolnet<span class="op">+</span><span class="dv">0</span>,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),<span class="dt">main=</span><span class="st">&quot;School network&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;orange&quot;</span>,<span class="dt">add=</span>T)</a>
+<a class="sourceLine" id="cb28-4" title="4">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>worknet<span class="op">+</span><span class="dv">0</span>,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),<span class="dt">main=</span><span class="st">&quot;Workplace network&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;darkgreen&quot;</span>,<span class="dt">add=</span>T)</a>
+<a class="sourceLine" id="cb28-5" title="5">cc &lt;-<span class="st">  </span><span class="kw">mygplot</span>(<span class="dt">coord=</span>net<span class="op">$</span>xy,net<span class="op">$</span>neighborhood,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(net<span class="op">$</span>network)),</a>
+<a class="sourceLine" id="cb28-6" title="6">                                    <span class="dt">main=</span><span class="st">&quot;Neighborhood network&quot;</span>,<span class="dt">edgecol=</span><span class="st">&quot;brown&quot;</span>,<span class="dt">add=</span>T)</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-5-5.png" width="1920" /></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">numAgents &lt;-<span class="st"> </span><span class="dv">1000</span></a>
+<a class="sourceLine" id="cb29-2" title="2">numDays &lt;-<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb29-3" title="3">naturalImmunity &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb29-4" title="4">net &lt;-<span class="st"> </span><span class="kw">makeDemographicNetwork</span>(numAgents)</a>
+<a class="sourceLine" id="cb29-5" title="5"></a>
+<a class="sourceLine" id="cb29-6" title="6">pool &lt;-<span class="st"> </span>net<span class="op">$</span>pool</a>
+<a class="sourceLine" id="cb29-7" title="7">cc &lt;-<span class="st"> </span>net<span class="op">$</span>xy</a>
+<a class="sourceLine" id="cb29-8" title="8">socialnetwork &lt;-<span class="st"> </span>net<span class="op">$</span>network</a>
+<a class="sourceLine" id="cb29-9" title="9"></a>
+<a class="sourceLine" id="cb29-10" title="10"></a>
+<a class="sourceLine" id="cb29-11" title="11">numInteractions &lt;-<span class="st">  </span><span class="kw">rep</span>(<span class="dv">8</span>,numDays)  <span class="co">##how many interactions per day per agent on average?</span></a>
+<a class="sourceLine" id="cb29-12" title="12">contagionProb &lt;-<span class="st"> </span><span class="kw">rep</span>(.<span class="dv">03</span>,numDays)    <span class="co">##normal contagioun probability after concat</span></a>
+<a class="sourceLine" id="cb29-13" title="13">sampleFromNetwork &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">1.0</span>,numDays)  <span class="co">##how likely you are to stick with &#39;your&#39; network</span></a>
+<a class="sourceLine" id="cb29-14" title="14"></a>
+<a class="sourceLine" id="cb29-15" title="15"><span class="co">#numInteractions[10:numDays] &lt;- 3     ##quarantiine goes into effect day 3.</span></a>
+<a class="sourceLine" id="cb29-16" title="16"><span class="co">#numInteractions[25:numDays] &lt;- 15  ##re-open </span></a>
+<a class="sourceLine" id="cb29-17" title="17"></a>
+<a class="sourceLine" id="cb29-18" title="18">plotNetwork &lt;-<span class="st"> </span><span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb29-19" title="19"><span class="co">#re-use previous network</span></a>
+<a class="sourceLine" id="cb29-20" title="20"><span class="co">#socialnetwork &lt;-makeNetwork(numAgents,numsets=1,power=.5)</span></a>
+<a class="sourceLine" id="cb29-21" title="21"></a>
+<a class="sourceLine" id="cb29-22" title="22"></a>
+<a class="sourceLine" id="cb29-23" title="23"><span class="cf">if</span>(plotNetwork)</a>
+<a class="sourceLine" id="cb29-24" title="24">{</a>
+<a class="sourceLine" id="cb29-25" title="25">    cc &lt;-<span class="kw">mygplot</span>(<span class="dt">coord=</span>cc,socialnetwork,<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(socialnetwork)),<span class="dt">main=</span><span class="st">&quot;Initial state&quot;</span>)</a>
+<a class="sourceLine" id="cb29-26" title="26"></a>
+<a class="sourceLine" id="cb29-27" title="27">}</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">disthistory &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>,<span class="dt">ncol=</span><span class="dv">7</span>,<span class="dt">nrow=</span>numDays)</a>
+<a class="sourceLine" id="cb30-2" title="2"></a>
+<a class="sourceLine" id="cb30-3" title="3">pool &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb30-4" title="4"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb30-5" title="5">{</a>
+<a class="sourceLine" id="cb30-6" title="6">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">makeAgent</span>(<span class="dt">psychstate=</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb30-7" title="7">                         <span class="dt">biostate=</span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">6</span>),</a>
+<a class="sourceLine" id="cb30-8" title="8">                          <span class="dt">p=</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">-</span>naturalImmunity, naturalImmunity),<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb30-9" title="9">}</a>
+<a class="sourceLine" id="cb30-10" title="10"></a>
+<a class="sourceLine" id="cb30-11" title="11"><span class="co">##infect patient 0</span></a>
+<a class="sourceLine" id="cb30-12" title="12">numInfected &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb30-13" title="13"><span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">sample</span>(numAgents,numInfected))</a>
+<a class="sourceLine" id="cb30-14" title="14">{</a>
+<a class="sourceLine" id="cb30-15" title="15">   pool[[i]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(pool[[i]],<span class="dv">2</span>) <span class="co">##infect this person</span></a>
+<a class="sourceLine" id="cb30-16" title="16">}</a>
+<a class="sourceLine" id="cb30-17" title="17"></a>
+<a class="sourceLine" id="cb30-18" title="18"><span class="cf">for</span>(day <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numDays)</a>
+<a class="sourceLine" id="cb30-19" title="19">{</a>
+<a class="sourceLine" id="cb30-20" title="20"></a>
+<a class="sourceLine" id="cb30-21" title="21">  <span class="co"># Create network from individual workplaces/schools/etc. </span></a>
+<a class="sourceLine" id="cb30-22" title="22">  <span class="co">#  socialnetwork &lt;- net$worknetwork + net$schoolnetwork </span></a>
+<a class="sourceLine" id="cb30-23" title="23"><span class="co">##who are you going to talk to today.</span></a>
+<a class="sourceLine" id="cb30-24" title="24">    sneezers &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">each=</span>numInteractions[day])</a>
+<a class="sourceLine" id="cb30-25" title="25">    sneezedons &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>,<span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb30-26" title="26">    </a>
+<a class="sourceLine" id="cb30-27" title="27">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb30-28" title="28">      {</a>
+<a class="sourceLine" id="cb30-29" title="29">      <span class="cf">if</span>(<span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>(<span class="dv">1</span><span class="op">-</span>sampleFromNetwork[day]) )</a>
+<a class="sourceLine" id="cb30-30" title="30">      {</a>
+<a class="sourceLine" id="cb30-31" title="31">        sneezedons[i] &lt;-<span class="st"> </span><span class="kw">sample</span>(numAgents,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb30-32" title="32">      }<span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb30-33" title="33">        sneezedons[i] &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>numAgents,<span class="dt">prob=</span>socialnetwork[sneezers[i],],<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb30-34" title="34">      }</a>
+<a class="sourceLine" id="cb30-35" title="35">     }</a>
+<a class="sourceLine" id="cb30-36" title="36">      </a>
+<a class="sourceLine" id="cb30-37" title="37">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(sneezers))</a>
+<a class="sourceLine" id="cb30-38" title="38">  {</a>
+<a class="sourceLine" id="cb30-39" title="39">    agent1 &lt;-<span class="st"> </span>pool[[ sneezers[i] ]]</a>
+<a class="sourceLine" id="cb30-40" title="40">    agent2 &lt;-<span class="st"> </span>pool[[ sneezedons[i] ]]</a>
+<a class="sourceLine" id="cb30-41" title="41">  </a>
+<a class="sourceLine" id="cb30-42" title="42">    </a>
+<a class="sourceLine" id="cb30-43" title="43">    <span class="co">##this constitutes the rules of infection.</span></a>
+<a class="sourceLine" id="cb30-44" title="44">    <span class="cf">if</span>((agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">2</span> <span class="op">||</span><span class="st"> </span>agent1<span class="op">$</span>biostate<span class="op">==</span><span class="dv">3</span> ) <span class="op">&amp;</span><span class="st"> </span>agent2<span class="op">$</span>biostate<span class="op">==</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span>contagionProb[day])</a>
+<a class="sourceLine" id="cb30-45" title="45">    {</a>
+<a class="sourceLine" id="cb30-46" title="46">         pool[[ sneezedons[i] ]] &lt;-<span class="st"> </span><span class="kw">setAgentState</span>(agent2,<span class="dv">2</span>)<span class="co">##infect!</span></a>
+<a class="sourceLine" id="cb30-47" title="47">    }</a>
+<a class="sourceLine" id="cb30-48" title="48">      </a>
+<a class="sourceLine" id="cb30-49" title="49">  }</a>
+<a class="sourceLine" id="cb30-50" title="50">    <span class="co">##increment each agent 1-day.</span></a>
+<a class="sourceLine" id="cb30-51" title="51">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>numAgents)</a>
+<a class="sourceLine" id="cb30-52" title="52">    {</a>
+<a class="sourceLine" id="cb30-53" title="53">      pool[[i]] &lt;-<span class="st"> </span><span class="kw">updateAgent</span>(pool[[i]])</a>
+<a class="sourceLine" id="cb30-54" title="54">    }</a>
+<a class="sourceLine" id="cb30-55" title="55">    </a>
+<a class="sourceLine" id="cb30-56" title="56">    states &lt;-<span class="st"> </span><span class="kw">sapply</span>(pool,<span class="dt">FUN=</span><span class="cf">function</span>(x){x<span class="op">$</span>biostate})</a>
+<a class="sourceLine" id="cb30-57" title="57">    distrib &lt;-<span class="st"> </span><span class="kw">table</span>(<span class="kw">factor</span>(states,<span class="dt">levels=</span><span class="dv">1</span><span class="op">:</span><span class="dv">7</span>))</a>
+<a class="sourceLine" id="cb30-58" title="58">    disthistory[day,] &lt;-<span class="st"> </span>distrib</a>
+<a class="sourceLine" id="cb30-59" title="59">   <span class="cf">if</span>(plotNetwork)</a>
+<a class="sourceLine" id="cb30-60" title="60">   {</a>
+<a class="sourceLine" id="cb30-61" title="61">     <span class="kw">mygplot</span>(cc,socialnetwork,states,<span class="dt">main=</span><span class="kw">paste</span>(<span class="st">&quot;Day&quot;</span>,day))</a>
+<a class="sourceLine" id="cb30-62" title="62">   }</a>
+<a class="sourceLine" id="cb30-63" title="63">  </a>
+<a class="sourceLine" id="cb30-64" title="64">         </a>
+<a class="sourceLine" id="cb30-65" title="65">}</a></code></pre></div>
+
+<img src="support_files/figure-html-demo/animation.gif" />
+
+
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1">disthist.df &lt;-<span class="kw">as.data.frame</span>(disthistory)</a>
+<a class="sourceLine" id="cb31-2" title="2"><span class="kw">colnames</span>(disthist.df) &lt;-<span class="st"> </span>STATENAMES</a>
+<a class="sourceLine" id="cb31-3" title="3">disthist.df<span class="op">$</span>day &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(disthistory)</a>
+<a class="sourceLine" id="cb31-4" title="4">histlong &lt;-<span class="st"> </span><span class="kw">melt</span>(disthist.df,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>)</a>
+<a class="sourceLine" id="cb31-5" title="5"></a>
+<a class="sourceLine" id="cb31-6" title="6"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">fill=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">position=</span><span class="st">&quot;stack&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb31-7" title="7"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-7-1.png" width="768" /></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="co">##make the SIR plot:</span></a>
+<a class="sourceLine" id="cb32-2" title="2">sir &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">day=</span>disthist.df<span class="op">$</span>day,</a>
+<a class="sourceLine" id="cb32-3" title="3">                  <span class="dt">susceptible =</span> disthist.df<span class="op">$</span>Unexposed,</a>
+<a class="sourceLine" id="cb32-4" title="4">                  <span class="dt">infected =</span> disthist.df[,<span class="dv">2</span>]<span class="op">+</span>disthist.df[,<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb32-5" title="5">                  <span class="dt">recovered =</span> <span class="kw">rowSums</span>(disthist.df[,<span class="dv">4</span><span class="op">:</span><span class="dv">7</span>]))</a>
+<a class="sourceLine" id="cb32-6" title="6"></a>
+<a class="sourceLine" id="cb32-7" title="7"><span class="kw">ggplot</span>(<span class="kw">melt</span>(sir,<span class="dt">id.vars=</span><span class="st">&quot;day&quot;</span>),<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">group=</span>variable,<span class="dt">y=</span>value,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-7-2.png" width="768" /></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"><span class="kw">ggplot</span>(histlong,<span class="kw">aes</span>(<span class="dt">x=</span>day,<span class="dt">y=</span>value,<span class="dt">group=</span>variable,<span class="dt">color=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="support_files/figure-html-demo/unnamed-chunk-7-3.png" width="768" /></p>
+</div>
+</div>
+</div>
+
+
+</div>
+
+
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

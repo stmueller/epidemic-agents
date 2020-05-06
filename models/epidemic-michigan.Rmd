@@ -1,0 +1,417 @@
+---
+title: "Modeling disease spread with a geographic agent-based model"
+author: "Anne Linja and Shane Mueller"
+date: "May 5, 2020"
+output:
+  rmdformats::readthedown:
+    gallery: yes
+    highlight: kate
+    self_contained: no
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+This simulation is an adaptation of the base model described [epidemic-base.html](here).  In this simulation, we generate a network model based roughly on the geographic layout of michigan, in order to explore how geography may impact disease spread.
+ 
+## The agent
+ 
+
+ The biological state has a few specific cases:
+ 
+
+1. Unexposed
+2. Asymptomatic but infected/contagious
+3. Symptomatic and contagious
+4. Symptomatic and not contagious
+5. Post-COVID Immune
+6. Naturally immune (will not contract)
+7. Death
+
+
+We could identify several others, but this might be fine.  So, we can define the agent according to just two numbers.  We might assume that initially, most people are in bio-state 1,  but some would be in state 6 already, which is essentially the same as state 5.
+
+We will just define these as a named list.
+```{r}
+library(ggplot2)
+library(dplyr)
+library(sna)
+library(knitr)
+library(reshape2)
+library(igraph)
+#library(animation)
+STATES <<- 7
+
+STATENAMES <<-  c("Unexposed",
+                  "Asymptomatic & contagious",
+"Symptomatic and contagious",
+"Symptomatic and not contagious",
+"Post-COVID immune",
+"Naturally immune",
+"Death")
+
+
+STATELABELS <<-  c("Unexposed","Asymptomatic\n & contagious",
+"Symptomatic \n& contagious",
+"Symptomatic \n& not contagious",
+"Post-COVID immune",
+"Naturally immune",
+"Death")
+
+makeAgent <- function(psychstate,biostate,age=30)
+{
+  
+  return (list(psychstate=psychstate,
+               biostate=biostate,
+               age=age,
+               nextbiostate=NA,
+               biostatecountdown=NA))
+}
+print(makeAgent(1,2))
+
+
+updateAgent<- function(agent)
+{
+   agent$biostatecountdown <- agent$biostatecountdown -1
+  if(agent$biostatecountdown <=0)
+  {
+    agent$biostate <- agent$nextbiostate
+    agent$biostatecountdown <- NA
+  }
+   return(agent)
+}
+```
+
+
+
+
+## Create transition matrix.
+
+If on each timestep we could move between states probabilistically, this would be a markov process. We could represent this by a simple transition network. If we represented the possible transitions in a network, that would simplify the logic above.  But we need more like a task network because the time taken to transition matters.   To keep it simple,   Let's make all timing distributions uniform with a min and max parameter for time in each state.  We can program two pathways through the stages, with a couple branch points (death vs recovery; the possibility of recovering after acquiring with no symptoms).  The progression of the disease is completely specified by the data, and a generic update function will automatically progress the agent each day.
+
+
+```{r}
+
+# * 1. Unexposed
+# * 2. Asymptomatic but infected/contagious
+# * 3. Symptomatic and contagious
+# * 4. Symptomatic and not contagious
+# * 5. Post-COVID Immune
+# * 6. Naturally immune (will not contract)
+# * 7. Death
+
+
+bioTransition <- matrix(0,STATES,STATES)
+bioMin <- matrix(1,STATES)      #state time minimum
+bioMax <- matrix(1,STATES)      #state time maximum
+
+
+
+bioMin[2] <- 3            #infected but asymptomatic for 3 to 10 days
+bioMax[2] <- 10          
+bioTransition[2,3] <- .5  #transition to infected with symptoms
+bioTransition[2,5] <- .5  #transition to no longer contagious/cured
+
+
+bioMin[3] <-    3             #symptoms + contagion
+bioMax[3] <- 8                #symptoms + contagion max
+bioTransition[3,4] <-  .95    #transitioon to no longer contagious
+bioTransition[3,7] <-  .05    #transitioon to death state 
+
+
+bioMin[4] <- 1          #symptoms bot no longer contagiious
+bioMax[4] <- 7
+bioTransition[4,5] <- 1  #Transition to 'immune' cured state.
+
+
+
+
+setAgentState<- function(agent, biostate)
+{
+  agent$biostate <- biostate
+  if(sum(bioTransition[biostate,])>0) # this state transitions to something else.
+  {
+    ##which state do we go to?
+     agent$biostatecountdown <- sample(x=seq(bioMin[biostate],bioMax[biostate]),1) #how long will we state in this state?
+     agent$nextbiostate <- sample(1:STATES, prob=bioTransition[agent$biostate,],size=1)
+     
+  } else{
+   agent$biostatecountdown <- NA
+   agent$nextbiostate <- NA   ##just so we can tell if the agent is finished.
+  }
+  return(agent) 
+}
+
+transitionAgent<- function(agent)
+{
+   return(setAgentState(agent,agent$nextbiostate))
+}
+
+updateAgent<- function(agent)
+{
+  if(!is.na(agent$biostatecountdown))
+  {
+   agent$biostatecountdown <- agent$biostatecountdown -1
+    if(agent$biostatecountdown <=0)  ##new state
+    {
+       agent <- transitionAgent(agent)
+
+    }
+  }
+   return(agent)
+}
+```
+
+```{r, fig.width=8,fig.height=8}
+
+par(xpd=NA,mar=c(5,5,8,5))
+gplot(bioTransition,label=STATELABELS)
+```
+
+
+```{r}
+
+mygplot <- function(coord, network,states,main="")
+{
+  if(is.null(coord))
+  {
+    coord  <- gplot.layout.fruchtermanreingold(network,layout.par=list(niter=500))
+  }
+  
+  newmin <- mean(coord[,2]) -  (-min(coord[,2]) + mean(coord[,2])) * 1.4
+   palette=c("white","yellow","red","green","darkgreen","blue","black")
+   plot(coord,col="black",bty="n",pch=16,cex=2.7,xaxt="n",yaxt="n",main=main,xlab="",
+          ylab="",axes=F,
+        ylim=c(newmin,max(coord[,2])),type="n")
+   
+  for(i in 1:nrow(network))
+     segments(coord[i,1],
+            coord[i,2],
+            coord[network[i,]==1,1],
+            coord[network[i,]==1,2],col="grey40")
+
+       points(coord,pch=16,cex=2.3,col= palette[states])
+              
+       points(coord,pch=1,cex=2.3,col="black")
+      legend(mean(coord[,1]),min(coord[,2]),bty='n',y.intersp=.7,cex=.8,
+              STATENAMES, pch=16,col=palette)
+              
+      return (coord)
+  }
+
+```
+
+## Modeling michigan county data.
+
+```{r,fig.width=18,fig.height=20}
+#library(readxl)
+counties   <- read.csv("MI_Counties.csv")
+numcounties <- nrow(counties) ##83
+
+plot(counties$LON,counties$LAT,pch=16,cex=3)
+
+countydist <- as.matrix(dist(cbind(counties$LON,counties$LAT*2)))
+ranks <- apply(countydist,1,rank)
+nearby <- 0+(ranks<7 | countydist<.85 )
+
+
+
+coords <- data.frame(LON=counties$LON,LAT=counties$LAT*2)
+coords$UP <- coords$LAT>91.05
+
+mygplot(coord=coords[,1:2],nearby,states=coords$UP+1)
+#matrix(NA,nrow=nrow(countydist),ncol=nrow(countydist))
+
+numAgents <- 2500 
+simPop <- ceiling(counties$Population/sum(counties$Population) * numAgents) 
+numAgents <- sum(simPop)
+whichcounty <- rep(1:numcounties,times=simPop) 
+inUP <- coords$UP[whichcounty]
+
+
+##Create the network
+
+withincounty <- outer(whichcounty,whichcounty,"==") 
+betweencounties <- matrix(NA,numAgents, numAgents) 
+for(i in 1:numAgents)
+{ 
+  for(j in 1:numAgents)
+   {
+    betweencounties[i,j] <-runif(1) < .5* nearby[whichcounty[i],whichcounty[j]]
+   }
+}
+#gplot(withincounty+betweencounties)
+socialnetwork <- (withincounty + betweencounties) > 0 #this is where we make the whole network. either T or 1, or F/2.
+coords2 <- cbind(coords[whichcounty,1] + rnorm(numAgents)*.15,
+                    coords[whichcounty,2] + rnorm(numAgents)*.15) 
+
+
+if(TRUE) 
+{
+    cc <-mygplot(coord=coords2,socialnetwork,rep(1,nrow(socialnetwork)),main="Initial state")
+
+}
+```
+
+##Now, make the social network combine within and between county data. Simulate disease spread.
+
+```{r,fig.width=10,fig.height=12, fig.show='animate'}
+
+#mygplot(coord=coords2,socialnetwork,
+#        states=rep(1,numAgents))
+
+
+numDays <- 56
+
+naturalImmunity <- .01  
+
+
+numInteractions <-  rep(10,numDays)  ##how many interactions per day per agent on average initially?
+contagionProb <- rep(.05,numDays)    ##normal contagian probability after contact
+sampleFromNetwork <- rep(1.0,numDays)  ##how likely you are to stick with 'your' network
+
+numInteractions[5:numDays] <- 5     
+numInteractions[25:numDays] <- 10  
+
+plotNetwork <- TRUE
+#re-use previous network
+#socialnetwork <-makeNetwork(numAgents,numsets=1,power=.5)
+
+
+if(plotNetwork)
+{
+    cc <-mygplot(coord=coords2,socialnetwork,rep(1,nrow(socialnetwork)),main="Initial state")
+
+}
+
+
+disthistory <- matrix(NA,ncol=7,nrow=numDays)
+disthistory.up <- matrix(NA,ncol=7,nrow=numDays)
+
+pool <- list()
+for(i in 1:numAgents)
+{
+   pool[[i]] <- makeAgent(psychstate=1,
+                         biostate=sample(c(1,6),
+                          p=c(1-naturalImmunity, naturalImmunity),1))
+}
+
+
+##Here we can decide who gets infected first:
+##infect patient 0
+numInfected <- 5 
+for(i in sample(numAgents,numInfected))
+{
+   pool[[i]] <- setAgentState(pool[[i]],2) ##infect this person
+}
+
+
+
+for(day in 1:numDays)
+{
+##who are you going to talk to today.
+    sneezers <- rep(1:numAgents,each=numInteractions[day])
+    sneezedons <- rep(NA,length(sneezers))
+    
+    for(i in 1:length(sneezers))
+      {
+      if(runif(1)<(1-sampleFromNetwork[day]) )
+      {
+        sneezedons[i] <- sample(numAgents,1)
+      }else{
+        sneezedons[i] <- sample(1:numAgents,prob=socialnetwork[sneezers[i],],1)
+      }
+     }
+      
+  for(i in 1:length(sneezers))
+  {
+    agent1 <- pool[[ sneezers[i] ]]
+    agent2 <- pool[[ sneezedons[i] ]]
+  
+    
+    ##this constitutes the rules of infection.
+    if((agent1$biostate==2 || agent1$biostate==3 ) & agent2$biostate==1 & runif(1)<contagionProb[day])
+    {
+         pool[[ sneezedons[i] ]] <- setAgentState(agent2,2)##infect!
+    }
+      
+  }
+    ##increment each agent 1-day.
+    for(i in 1:numAgents)
+    {
+      pool[[i]] <- updateAgent(pool[[i]])
+    }
+    
+    states <- sapply(pool,FUN=function(x){x$biostate})
+    states.up <- sapply(pool[inUP],FUN=function(x){x$biostate})
+    
+    distrib <- table(factor(states,levels=1:7))
+    distrib.up <- table(factor(states.up,levels=1:7))
+    
+    disthistory[day,] <- distrib
+    disthistory.up[day,] <- distrib.up
+
+       if(plotNetwork)
+   {
+     mygplot(cc,socialnetwork,states,main=paste("Day",day))
+   }
+  
+         
+  }
+  
+  #barplot(t(disthistory),col=1:7)
+  
+```
+## Plot final state
+```{r,fig.width=15,fig.height=20}
+ xx <- mygplot(cc,socialnetwork,states,main=paste("Day",day))
+```
+
+## Progress in state vs. UP only. Growth for UP and for entire state. 
+
+```{r fig.width=8,fig.height=5} 
+disthist.df <-as.data.frame(disthistory)
+colnames(disthist.df) <- STATENAMES
+disthist.df$day <- 1:nrow(disthistory)
+histlong <- melt(disthist.df,id.vars="day")
+
+ggplot(histlong,aes(x=day,y=value,fill=variable)) + geom_bar(stat="identity",position="stack") + 
+  theme_bw()
+
+##make the SIR plot:
+sir <- data.frame(day=disthist.df$day,
+                  susceptible = disthist.df$Unexposed,
+                  infected = disthist.df[,2]+disthist.df[,3],
+                  recovered = rowSums(disthist.df[,4:7]))
+
+ggplot(melt(sir,id.vars="day"),aes(x=day,group=variable,y=value,color=variable)) + geom_line() + theme_bw()+ ggtitle(label="Disease spread in Michigan")
+
+ggplot(histlong,aes(x=day,y=value,group=variable,color=variable)) + geom_line() + theme_bw() + ggtitle(label="Disease spread in Michigan")
+
+
+##Now, do UP only
+
+disthist.df <-as.data.frame(disthistory.up)
+colnames(disthist.df) <- STATENAMES
+disthist.df$day <- 1:nrow(disthistory.up)
+histlong <- melt(disthist.df,id.vars="day")
+
+ggplot(histlong,aes(x=day,y=value,fill=variable)) + geom_bar(stat="identity",position="stack") + 
+  theme_bw() +  ggtitle(label="Disease spread in Upper Peninsula Michigan")
+
+
+
+##make the SIR plot:
+sir <- data.frame(day=disthist.df$day,
+                  susceptible = disthist.df$Unexposed,
+                  infected = disthist.df[,2]+disthist.df[,3],
+                  recovered = rowSums(disthist.df[,4:7]))
+
+
+ggplot(melt(sir,id.vars="day"),aes(x=day,group=variable,y=value,color=variable)) + geom_line() + theme_bw() + ggtitle(label="Disease spread in Upper Peninsula Michigan")
+
+ggplot(histlong,aes(x=day,y=value,group=variable,color=variable)) + geom_line() + theme_bw()+ ggtitle(label="Disease spread in Upper Peninsula Michigan")
+
+```
+
+##can model each county as an SIR. Can model larger numagents, but it takes forever to run.
