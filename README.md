@@ -9,10 +9,13 @@ This repository is made available for educational purposes. Users are cautioned 
 
 ## The models
 
-* [The base model](web/epidemic-model-base.html)
-* [Demographics model](web/epidemic-demographics.html)
-* [Michigan geographic model](web/epidemic-michigan.html)
-* [Travellers outside the network model](web/epidemic-model-travellers.html)
+* [The base model](web/epidemic-model-base.html) [code](https://github.com/stmueller/epidemic-agents/blob/master/models/epidemic-model-base.Rmd)
+* [Demographics model](web/epidemic-demographics.html) [code](https://github.com/stmueller/epidemic-agents/blob/master/models/epidemic-demographics.Rmd)
+* [Michigan geographic model](web/epidemic-michigan.html)[code](https://github.com/stmueller/epidemic-agents/blob/master/models/epidemic-michigan.Rmd)
+* [Travellers outside the network model](web/epidemic-model-travellers.html) [code](https://github.com/stmueller/epidemic-agents/blob/master/models/epidemic-model-travellers.Rmd)
+
+##
+
 
 Some visualizations from the network:
 
