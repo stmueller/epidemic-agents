@@ -23,12 +23,12 @@ This repository is made available for educational purposes. Users are cautioned 
 ![](<img src="https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-base/base.gif")
 
 ### Disease spread in a geographic network representating the state of Michigan:
-~["Simulation of geographic networks of the state of Michigan"]("https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-michigan/anim2.gif")
+~["Simulation of geographic networks of the state of Michigan"](https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-michigan/anim2.gif)
 
 ### Disease spread in a demographic network including schools, workplaces, neighborhoods
-!["https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-demo/network.gif"]( "Simulation of extra-network vacationers entering the network")
+![Simulation of extra-network vacationers entering the network](https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-demo/network.gif)
 
-!["https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-demo/animation.gif"]("Simulation of Demographic networks")
+!["Simulation of Demographic networks"](https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-demo/animation.gif)
 
 ### Disease spread attributable to visitors entering the network from outside:
-!["Simulation of outsiders effect on disease"]("/web/support_files/figure-html-travellers/animation.gif")
+!["/web/support_files/figure-html-travellers/animation.gif"](Simulation of outsiders effect on disease)
