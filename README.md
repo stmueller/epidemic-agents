@@ -17,8 +17,8 @@ This repository is made available for educational purposes. Users are cautioned 
 
 ## Some visualizations from the network:
 
-![Simulation of Michigan-based geographic network](/animations/anim.gif)
+![Simulation of Michigan-based geographic network](/animations/Michigan.gif | width=500)
 
-![Simulation of Demographic networks](/animations/networks.gif?raw=true)
+![Simulation of Demographic networks](/animations/networks.gif | width=500)
 
-![Simulation of extra-network vacationers entering the network](/animations/animation.gif)
+![Simulation of extra-network vacationers entering the network](/animations/animation.gif|width=500)
