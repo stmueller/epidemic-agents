@@ -19,6 +19,6 @@ This repository is made available for educational purposes. Users are cautioned 
 
 Some visualizations from the network:
 
-[Demographic networks][animations/networks.gif]
-[michigan][animations/anim.gif]
-[vacationers][animations/animation.gif]
+[Demographic networks](animations/networks.gif |width=35)
+[michigan](animations/anim.gif | width=350)
+[vacationers](animations/animation.gif| width=350)
