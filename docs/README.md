@@ -22,6 +22,13 @@ This repository is made available for educational purposes. Users are cautioned 
 ### Disease spread in a small-world network:
 ![](https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-base/base.gif)
 
+
+Test::::
+
+<img src={{site.url}}//web/support_files/figure-html-michigan/anim2.gif>
+
+--------test over
+
 ### Disease spread in a geographic network representating the state of Michigan:
 [Simulation of geographic networks of the state of Michigan](https://github.com/stmueller/epidemic-agents/blob/master/web/support_files/figure-html-michigan/anim2.gif)
 
