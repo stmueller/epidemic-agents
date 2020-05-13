@@ -3,11 +3,11 @@ title: "Modeling psychological impacts on epidemic spread"
 author: "Shane T. Mueller"
 date: May 4, 2020
 output:
+  pdf_document: default
   rmdformats::readthedown:
     gallery: yes
     highlight: kate
     self_contained: no
-  pdf_document: default
   word_document: default
   html_document:
     df_print: paged
