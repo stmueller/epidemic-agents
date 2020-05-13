@@ -1,0 +1,568 @@
+---
+title: "Modeling psychological impacts on epidemic spread: Improved performance for large models"
+author: "Shane T. Mueller"
+date: May 9, 2020
+output:
+  rmdformats::readthedown:
+    gallery: yes
+    highlight: kate
+    self_contained: no
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+## Background
+
+
+ 
+## Developing the agent
+ 
+We will use a simplified task network model to represent the biological progression of the disease.
+ First, let's suppose that an agent has two states: its psychological state and its biological state.   psychological state might be 'practicing distancing', 'believes conspiracy theory', 'in quarantine', and we can explore these later.  Let's just consider everyone is in a generic 'informed' state [1]. 
+ 
+ The biological state has a few specific cases:
+ 
+
+1. Unexposed
+2. Asymptomatic but infected/contagious
+3. Symptomatic and contagious
+4. Symptomatic and not contagious
+5. Post-COVID Immune
+6. Naturally immune (will not contract)
+7. Death
+
+
+We could identify several others as well. Existing SIR models used for the COVID-19 epidemic often break #3 into 2-3 stages, ending in hospitalization and possibly death. With that stage, we could identify the hospital needs, but it will require estimating more parameters and having a more complex model.  Initially, we can define the agent according to just a single biological value--the state it is in.  We might assume that initially, most people are in bio-state 1,  but some would be in state 6 already, which is essentially the same as state 5. we will also keep track of a psychological value as a placeholder.
+
+To keep things simple, we will use some global variables to define the model, including the labels for these states. 
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(sna)
+library(knitr)
+library(reshape2)
+library(igraph)
+STATES <<- 7
+
+STATENAMES <<-  c("Unexposed",
+                  "Asymptomatic & contagious",
+"Symptomatic and contagious",
+"Symptomatic and not contagious",
+"Post-COVID immune",
+"Naturally immune",
+"Death")
+
+
+STATELABELS <<-  c("Unexposed","Asymptomatic\n & contagious",
+"Symptomatic \n& contagious",
+"Symptomatic \n& not contagious",
+"Post-COVID immune",
+"Naturally immune",
+"Death")
+
+
+```
+
+## Timecourse of Biological model
+
+Once infected, we will assume that the trajectory of the disease is essentially fixed and progresses, eventually leading to recovered or (in a small number) death.  We need a way to transition the biological state automatically in a reasonable way, much like a task network model that keeps track of time of sub-events.  This should consider ONLY the natural progression of the disease. We will model timecourse on a timecourse of 1-day units.
+
+
+An easy way to do this is with ballistic events.  That is, we can keep track of the next transition point for any state, if it is programmed at the beginning of the state. This let's you use distributions other than an exponential/geometric distribution, because you can determine the stage duration at the beginning of the stage.
+
+## Testing progression of biological model
+
+We can prototype the information we need to progress through biological states. Here, when we set a state (infected), we also set the next state and when the next state will occur as a countdown timer. Alterately, we could identify the timepoint at which the change needs to be handled. This might be smarter if we had a larger more complex system, because we could keep track of only the next transitions more efficiently across a large number of agents and transition types. But here, we will just let each agent know when it should transation to the next stage.
+
+
+```{r}
+
+set.seed(100)
+## create 10 agents infected with biostate = 1
+BIOSTATES <<- as.integer(rep(1,10))
+NEXTSTATES <<- as.integer(sample(c(2,3,4),replace=T,10))
+TRANSITIONTIME <<- runif(10,min=1,max=10)
+
+
+updateAgents <- function(curtime)
+{
+  updatefilter <- TRANSITIONTIME<=curtime  & !is.na(NEXTSTATES)
+  BIOSTATES[updatefilter] <<- NEXTSTATES[updatefilter]
+  NEXTSTATES[updatefilter] <<- NA
+  
+}
+
+```
+
+Now, we can run a loop, and on each day update the agent with the updateAgent function. Because R is functional, we need to return and replace the agent, which will ultimately make the model slower, and we might consider another approach eventually to scale the simulation up.
+
+
+```{r,fig.width=8,fig.height=6}
+set.seed(100)
+## create 10 agents infected with biostate = 1
+BIOSTATES <<- as.integer(rep(1,10))
+NEXTSTATES <<- as.integer(sample(c(2,3,4),replace=T,10))
+TRANSITIONTIME <<- as.integer(round(runif(10,min=1,max=10)))
+
+statehistory <- matrix(NA,ncol=10,nrow=20)
+
+for(time in 1:20)
+{
+  
+  updateAgents(time)
+  print(table(BIOSTATES)  )
+  statehistory[time,] <- BIOSTATES
+ }
+ 
+
+image(statehistory,ylab="Agent",xlab="Time step",xaxt="n",yaxt="n")
+axis(1,1:20/20,1:20)
+axis(2,1:10/10,1:10,las=3)
+```
+
+
+## Create transition matrix.
+
+Now that we have a way of transitioning between states, we need to implement the entire set of possible transitions and the timing of each stage. To keep it simple,  we will make all timing distributions uniform with a min and max parameter for time in each state.  We can program several possible pathways   through the stages, with a couple branch points (death vs recovery; the possibility of recovering after acquiring with no symptoms).  The progression of the disease is completely specified by this data, and a generic update function will then automatically progress the agent each day.
+
+```{r}
+
+# * 1. Unexposed
+# * 2. Asymptomatic but infected/contagious
+# * 3. Symptomatic and contagious
+# * 4. Symptomatic and not contagious
+# * 5. Post-COVID Immune
+# * 6. Naturally immune (will not contract)
+# * 7. Death
+
+set.seed(100)
+STATES <<- 7
+
+STATENAMES <<-  c("Unexposed",
+                  "Asymptomatic & contagious",
+"Symptomatic and contagious",
+"Symptomatic and not contagious",
+"Post-COVID immune",
+"Naturally immune",
+"Death")
+
+
+STATELABELS <<-  c("Unexposed","Asymptomatic\n & contagious",
+"Symptomatic \n& contagious",
+"Symptomatic \n& not contagious",
+"Post-COVID immune",
+"Naturally immune",
+"Death")
+
+numAgents <- 5
+numDays <- 30
+## create 10 agents infected with biostate = 1
+BIOSTATES <<- as.integer(rep(NA,numAgents))
+NEXTSTATES <<- as.integer(rep(NA,numAgents))
+TRANSITIONTIME <<- as.integer(rep(NA,numAgents))
+
+statehistory <- matrix(NA,ncol=numAgents,nrow=numDays)
+
+
+bioTransition <- matrix(0,STATES,STATES)
+bioMin <- matrix(1,STATES)      #state time minimum
+bioMax <- matrix(1,STATES)      #state time maximum
+
+
+
+bioMin[2] <- 3            #infected but asymptomatic for 3 to 10 days
+bioMax[2] <- 10          
+bioTransition[2,3] <- .5  #transition to infected with symptoms
+bioTransition[2,5] <- .5  #transition to no longer contagious/cured
+
+
+bioMin[3] <-    3             #symptoms + contagion
+bioMax[3] <- 8                #symptoms + contagion max
+bioTransition[3,4] <-  .95    #transitioon to no longer contagious
+bioTransition[3,7] <-  .05    #transitioon to death state 
+
+
+bioMin[4] <- 1          #symptoms bot no longer contagiious
+bioMax[4] <- 7
+bioTransition[4,5] <- 1  #Transition to 'immune' cured state.
+
+
+
+library(sna)
+par(xpd=NA,mar=c(5,5,8,5))
+gplot(bioTransition,label=STATELABELS)
+
+```
+
+Now, create functions to create/set the state of a group of agents, all at once.
+
+
+```{r, fig.width=8,fig.height=8}
+
+##This is used for setting the state of a single agent; mostly
+## for infection.  Set a series of agents to a number of specific states at a time,
+## and this will program their next state.
+setAgentStates <- function(agents, biostates,curtime)
+{
+  BIOSTATES[agents] <<- biostates
+
+  
+  ##Do these states transition to another?
+  needTransition <- rowSums(bioTransition[biostates,,drop=F] )>0
+  needTransition <- needTransition & !is.na(needTransition)
+
+  ##These are the states we have set that need to transition to another state; 
+  ## we need to program the transition now.
+  newstates <- BIOSTATES[needTransition]
+  
+  for(i in agents[needTransition])
+  {
+    NEXTSTATES[i] <<- sample(1:STATES,prob=bioTransition[BIOSTATES[i],],1)
+    TRANSITIONTIME[i] <<- curtime +floor(runif(1,min= bioMin[BIOSTATES[i]],
+                                          max= (1+ bioMax[BIOSTATES[i]])))
+  } 
+}
+
+
+##This is the same as previously defined.
+updateAgents <- function(curtime)
+{
+  updatefilter <- !is.na(TRANSITIONTIME) & TRANSITIONTIME<=curtime  & !is.na(NEXTSTATES)
+  
+  if(sum(updatefilter,na.rm=T)>0)
+  {  
+    setAgentStates((1:length(updatefilter))[updatefilter],
+                   NEXTSTATES[updatefilter],curtime)
+    
+  }
+
+  
+}
+
+
+##Initialize agents in state 2  (infected but asymptomatic)
+setAgentStates(1:numAgents,2,curtime=0)
+statehistory <- matrix(NA,ncol=numAgents,nrow=numDays)
+
+for(time in 1:numDays)
+{
+  updateAgents(time)
+  statehistory[time,] <- BIOSTATES
+ }
+ 
+
+image(statehistory,ylab="Agent",xlab="Time step",xaxt="n",yaxt="n")
+axis(1,1:numDays/numDays,1:numDays)
+axis(2,1:numAgents/numAgents,1:numAgents,las=3)
+
+
+```
+
+
+## Basic social model
+
+Now that we have the biological disease model whose stages we can control (and it has branches too.) We can infect an agent or deliberately change its state.  Now, let's 
+put this is a population.  We will assume a flat organization where everyone has an equal chance of interacting with everyone else. Here, the parameters are:
+
+* 'numAgents': how many agents are in the simulation. This simulation cannot easily handle more than around 1000. Even with a fast computer, you might simulate 5000 and it will take 20 minutes or more. To simulate a larger realistic population, we would need to re-implement some of the data and algorithms.
+* 'naturalImmunity': This controls the proportion who will never get the disease at the beginning of the  simulation.
+* 'numInteractions': how many interactions do each agent make every day?
+* 'numDays': how many days to simulate?
+* 'contagionProb': how likely is the disease to spread when an infected agent interacts with a susceptible agent?
+
+We will also keep track of the the distribution each day in the matrix disthistory.  We will start the simulation by infecting a small number of agents (here, 3) using setAgentState() function.
+
+```{r,fig.width=10,fig.height=5}
+set.seed(100)
+
+
+
+numAgents <- 5000
+numDays <- 30
+## create 10 agents infected with biostate = 1
+BIOSTATES <<- as.integer(rep(NA,numAgents))
+NEXTSTATES <<- as.integer(rep(NA,numAgents))
+TRANSITIONTIME <<- as.integer(rep(NA,numAgents))
+
+
+
+naturalImmunity <- .01  #1 % naturally immune
+numInteractions <-  10 ##how many interactions per day per agent on average?
+numDays <- 50
+contagionProb <- .1    ##normal contagion probability
+
+
+disthistory <- matrix(NA,ncol=STATES,nrow=numDays)
+
+
+##initialize all the agents as uninfected, except for 3 agents who are infected.
+setAgentStates(1:numAgents,c(2,2,2,rep(1,numAgents-3)),curtime=0)
+
+
+
+for(day in 1:numDays)
+{
+##who are you going to talk to today.
+    sneezer <- rep(1:numAgents,each=numInteractions)
+    sneezeon <- sample(numAgents,replace=T,size=numAgents*numInteractions)
+    
+   infect <- ((BIOSTATES[sneezer]==2 | BIOSTATES[sneezer] ==3 ) &
+       (BIOSTATES[sneezeon] == 1) & 
+        runif(numAgents) < contagionProb)
+
+   
+   if(any(infect))
+   {
+     infected <- unique(sneezeon[infect])
+     setAgentStates(infected,2,curtime=day)
+   }   
+
+    updateAgents(day)
+    distrib <- table(factor(BIOSTATES,levels=1:STATES))
+    disthistory[day,] <- distrib
+
+}
+
+#barplot(t(disthistory),col=1:7)
+disthist.df <-as.data.frame(disthistory)
+colnames(disthist.df) <- STATENAMES
+disthist.df$day <- 1:nrow(disthistory)
+
+
+show <- disthist.df[c(1,5*(1:(day/5))),c(8,1:7)]
+
+histlong <- melt(disthist.df,id.vars="day")
+
+ggplot(histlong,aes(x=day,y=value,fill=variable)) + geom_bar(stat="identity",position="stack") + 
+  theme_bw()
+
+
+##make the SIR plot:
+sir <- data.frame(day=disthist.df$day,
+                  susceptible = disthist.df$Unexposed,
+                  infected = disthist.df[,2]+disthist.df[,3],
+                  recovered = rowSums(disthist.df[,4:7]))
+
+plot0 <- ggplot(melt(sir,id.vars="day"),aes(x=day,group=variable,y=value,color=variable)) + geom_line() + theme_bw() + ggtitle(label="Initial model with complete contact between agents")
+print(plot0)
+
+cases <- sir$infected+sir$recovered
+cases.daily <- cases[-1] - cases[-length(cases)]
+plot(cases.daily,type="h",xlab="Day",ylab="Daily new cases")
+```
+
+
+## Improving social network
+To improve the efficiency of the network, we will try using a sparse matrix representation.  The memory requirements of a matrix scale with the square of the number of agents, and so it might make a difference, especially when the matrix is mostly sparse.
+
+
+```{r,fig.width=18,fig.height=18}
+#library(Matrix)
+library(SparseM)
+
+makeNetwork<- function(numAgents,numsets=3,steps=1,power=1)
+{
+  ord <- sample(numAgents)
+  tmp<-as_adjacency_matrix(sample_pa(numAgents,power=power),sparse=F)
+  tmp <- (tmp + t(tmp))>0
+  tmp <- tmp[ord,ord]
+
+  if(numsets>1)
+  {
+    for(i in 2:numsets)
+  {
+    ord <- sample(numAgents)
+    sn2 <-as_adjacency_matrix(sample_pa(numAgents,power=power),sparse=F)[ord,ord]
+    tmp <- tmp + sn2 + t(sn2)
+    
+   }
+  }
+  if(steps>1)
+  {
+   for(i in 2:steps)
+   {
+      tmp <- tmp + tmp %*% tmp  ## iterate to neighbors
+   }
+  }
+
+  
+   ##return a sparse symmetric matrix:
+#  as.matrix.ssr((tmp),symmetric=TRUE)
+   as.matrix.csr(  (tmp>0)+0)
+
+}
+
+
+mygplot <- function(coord, network,states,main="",plotEdges = TRUE)
+{
+  ##deconvert from sparse matrix because sna cannot convert from this
+  ##sparse matrix to edgelist.
+  #network <- as.matrix(network)
+  if(is.null(coord))
+  {
+    coord  <- gplot.layout.fruchtermanreingold((network),layout.par=list(niter=500))
+  }
+  
+  newmin <- mean(coord[,2]) - (-min(coord[,2]) + mean(coord[,2])) * 1.4
+   palette=c("white","yellow","red","green","darkgreen","blue","black")
+   plot(coord,col="black",bty="n",pch=16,cex=2.7,xaxt="n",yaxt="n",main=main,xlab="",ylab="",axes=F,
+        ylim=c(newmin,max(coord[,2])),type="n")
+   
+   
+   ##ja is column
+   ## ia is pointer to row of column transitions.
+   
+   
+   if(plotEdges){
+     
+   columns <- network@ja
+   rowsize <- network@ia[-1] - network@ia[-length(network@ia)]
+   rows <- rep(1:network@dimension[1],rowsize)
+     segments(coord[rows,1],coord[rows,2],
+              coord[columns,1],coord[columns,2])
+
+   }
+   
+   points(coord,pch=16,cex=2.3,col= palette[states])
+              
+   points(coord,pch=1,cex=2.3,col="black")
+      legend(mean(coord[,1]),min(coord[,2]),bty='n',y.intersp=.7,cex=.8,
+              STATENAMES, pch=16,col=palette)
+              
+      return (coord)
+}
+set.seed(100)
+socialnetwork <- makeNetwork(100,numsets=1,power=.96,steps=2)
+
+cc <-  mygplot(coord=NULL,socialnetwork,rep(1,nrow(socialnetwork)),main="Initial state")
+```
+
+
+Now, let's just say that we sample interactions MOSTLY from this network. For example 90% of interactions come from the network, and 10% are random, which would represent mostly-contact with your direct family, while 50-50 would involve much more community contact. This lets us automatically combine a network probabilistically with a random one.
+
+## Simulating with a social network.
+
+Now, we can run the same simulation, using the social network with more limited connections.
+
+```{r,fig.width=8,fig.height=6}
+#set.seed(100)
+print(Sys.time())
+numAgents <- 15000
+numDays <- 90
+
+BIOSTATES <<- as.integer(rep(NA,numAgents))
+NEXTSTATES <<- as.integer(rep(NA,numAgents))
+TRANSITIONTIME <<- as.integer(rep(NA,numAgents))
+
+socialnetwork <- makeNetwork(numAgents,numsets=1,power=.96,steps=2)
+
+##Do not try to plot if the network is very large.
+#cc <-  mygplot(coord=NULL,socialnetwork,rep(1,nrow(socialnetwork)),main="Initial state")
+
+
+
+naturalImmunity <- .01  #1 % naturally immune
+
+numInteractions <-  rep(10,numDays)  ##how many interactions per day per agent on average?
+contagionProb <- rep(.1,numDays)    ##normal contagioun probability after concat
+sampleFromNetwork <- rep(.98,numDays)  ##how likely you are to stick with 'your' network
+
+numInteractions[14:numDays] <- 3     ##quarantiine goes into effect day 14.
+numInteractions[45:numDays] <- 10  ##re-open 
+
+
+
+
+disthistory <- matrix(NA,ncol=STATES,nrow=numDays)
+
+
+##initialize all the agents as uninfected, except for 3 agents who are infected.
+setAgentStates(1:numAgents,c(2,2,2,rep(1,numAgents-3)),curtime=0)
+
+   ##this can be pre-calculated because the network does not change.   
+   columns <- socialnetwork@ja
+   rowsize <- socialnetwork@ia[-1] - socialnetwork@ia[-length(socialnetwork@ia)]
+   rows <- rep(1:socialnetwork@dimension[1],rowsize)
+    
+
+for(day in 1:numDays)
+{
+    ##who are you going to talk to today.
+    sneezers <- rep(1:numAgents,each=numInteractions[day])
+    #sneezedons <- rep(NA,length(sneezers))
+ 
+    
+ 
+   ##First, sample appropriate sneezer/sneezon pairs.
+   ## this data frame contains the sneezer as a column named sneezer,
+   ##and the sneezed-ons as the rest of the colums.
+   pairs <- aggregate(columns, list(sneezer=rows),
+                      function(x){
+                         alive <- BIOSTATES[x] < 7; ##they are alive! 
+                         sample(x[alive],numInteractions[day],replace=T)})
+   sneezedons <- pairs[,-1]
+   ##add random sneezes outside the network.
+   randoms <- runif(length(sneezedons))>sampleFromNetwork[day]
+   numrandoms <- sum(randoms)
+   sneezedons[randoms] <- sample((1:numAgents)[BIOSTATES < 7],replace=T,size=numrandoms)
+   sneezedons <- as.vector(t(sneezedons))
+
+   infect <- ((BIOSTATES[sneezers]==2 | BIOSTATES[sneezers] ==3 ) &
+       (BIOSTATES[sneezedons] == 1) & 
+        runif(numAgents) < contagionProb[day])
+
+   
+   if(any(infect))
+   {
+     infected <- unique(sneezedons[infect])
+     setAgentStates(infected,2,curtime=day)
+   }   
+
+    updateAgents(day)
+    distrib <- table(factor(BIOSTATES,levels=1:STATES))
+    disthistory[day,] <- distrib
+
+}
+print(Sys.time())
+```
+
+```{r}
+
+#barplot(t(disthistory),col=1:7)
+disthist.df <-as.data.frame(disthistory)
+colnames(disthist.df) <- STATENAMES
+disthist.df$day <- 1:nrow(disthistory)
+
+
+show <- disthist.df[c(1,5*(1:(day/5))),c(8,1:7)]
+#print(kable(show))
+
+histlong <- melt(disthist.df,id.vars="day")
+
+ggplot(histlong,aes(x=day,y=value,fill=variable)) + geom_bar(stat="identity",position="stack") + 
+  theme_bw()
+
+
+##make the SIR plot:
+sir <- data.frame(day=disthist.df$day,
+                  susceptible = disthist.df$Unexposed,
+                  infected = disthist.df[,2]+disthist.df[,3],
+                  recovered = rowSums(disthist.df[,4:7]))
+
+plot0 <- ggplot(melt(sir,id.vars="day"),aes(x=day,group=variable,y=value,color=variable)) + geom_line() + theme_bw() + ggtitle(label="Initial model with network contact")
+print(plot0)
+
+cases <- sir$infected+sir$recovered
+cases.daily <- cases[-1] - cases[-length(cases)]
+plot(cases.daily,type="h",xlab="Day",ylab="Daily new cases")
+
+
+
+
+
+
+
+#barplot(t(disthistory),col=1:7)
+```
